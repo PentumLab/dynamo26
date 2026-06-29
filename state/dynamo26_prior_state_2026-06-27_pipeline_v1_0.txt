@@ -1,0 +1,275 @@
+DYNAMO-26 PRIOR_STATE_FILE
+file_version: pipeline_v1.0
+created_for_next_run: true
+created_at_run_date: 2026-06-27
+created_at_berlin: 2026-06-27T13:05:55+02:00
+created_at_utc: 2026-06-27T11:05:55Z
+model_name: DYNAMO26 3.0
+model_version: pipeline_v1.0
+language: de
+intended_use: prior_state_input_for_next_DYNAMO_26_pipeline_run
+
+IMPORTANT_PROCESSING_INSTRUCTIONS_FOR_NEXT_STATE_MACHINE_RUN
+Diese Datei ist als PRIOR_STATE aus dem letzten DYNAMO-26-Pipeline-Lauf zu behandeln.
+Beim naechsten Lauf muss die Pipeline diese Datei in LOAD_PRIOR_STATE laden.
+Die Werte aus dieser Datei sind gespeicherte Modellzustaende, keine neuen Quellen.
+Der naechste Lauf muss FETCH_CURRENT_SOURCES erneut vollstaendig ausfuehren.
+Neue Quellen nach created_at_run_date muessen gegen diesen Prior-State gemappt werden.
+Bei gleichem Kalendertag ist created_at_utc als strikter Tie-Break-Cutoff zu verwenden.
+T7 externe Prognosen, Projektionen, Buchmacherquoten, Elo-/Ranking-Prognosen, FIFA-Ranking als Prognoseersatz und Medien-Wahrscheinlichkeiten duerfen nicht gesucht, geladen, geoeffnet, zitiert oder verwendet werden.
+Legacy-SRC_T7-Zeilen aus aelteren Prior-States sind ignorierte Legacy-Information ohne Modellwirkung und werden hier nicht als aktive Quellen fortgefuehrt.
+Social-Media-Signale duerfen diese Datei nicht als Bestaetigung ersetzen.
+Diese Datei enthaelt keine HTML-Ausgabe und darf nicht als aktueller Quellenlauf verwendet werden.
+
+RUN_METADATA
+run_id: 20260627T130555
+run_date: 2026-06-27
+run_mode: DAILY_CURRENT_UPDATE
+run_result_type: CURRENT_WITH_NEW_MODEL_EVENTS
+output_status: CURRENT
+confidence_level: MEDIUM
+source_quality_score: 87
+probability_sum: 100.0
+probability_simulation_method: seeded_stratified_monte_carlo_32_slot_affected_pool_lock
+probability_simulation_seed: 26062026
+probability_simulation_iterations: 100000
+prior_loaded_from_this_run: website/wm26/runs/dynamo26_prior_state_2026-06-26_pipeline_v1_0.txt
+pipeline_loaded_from_this_run: dynamo26_code_v1_0.txt
+dynamic_strength_mode: rank_preserving_latent_fallback_no_numeric_index_backfill
+prior_cutoff_utc: 2026-06-26T12:07:26Z
+affected_pool_prior_total_percent: 40.9
+affected_pool_current_total_percent: 40.9
+unaffected_title_probabilities_locked: true
+rounding_method: largest_remainder_to_one_decimal
+sort_rule: title_probability_percent descending; tie_break=prior latent order from loaded Prior-State
+self_correction_count: 0
+
+SEARCH_QUERIES_USED
+- 2026 FIFA World Cup June 26 2026 results scores fixtures Belgium New Zealand Iran Egypt Saudi Arabia Spain Uruguay Cape Verde
+- site:fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026 June 26 2026 Belgium New Zealand Egypt Iran Spain Uruguay Cape Verde Saudi Arabia match report
+- June 26 2026 World Cup Belgium New Zealand Egypt Iran Spain Uruguay Cape Verde Saudi Arabia match report result
+- June 26 2026 World Cup Norway France Senegal Iraq match report result
+- site:fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026 June 26 2026 Norway France Senegal Iraq match report
+- Norway 1-4 France Senegal 5-0 Iraq World Cup 2026 report June 26 news
+- Uruguay 0-1 Spain Cape Verde 0-0 Saudi Arabia World Cup 2026 report June 26 news
+- site:sportschau.de/fussball/fifa-wm-2026 Norwegen Frankreich Dembélé Gala Frankreich marschiert weiter 2026
+- site:sportschau.de/fussball/fifa-wm-2026 Kap Verde Saudi-Arabien 0:0 WM 2026 Highlights
+- French Football Federation France Norway 4-1 World Cup 2026 Dembele official
+- Belgium football federation New Zealand 5-1 World Cup 2026 official
+- site:fff.fr Norvège France Dembélé 4-1 26 juin 2026
+- site:rbfa.be Belgium New Zealand 5-1 27 June 2026 World Cup
+- Senegal 5-0 Iraq World Cup 2026 match report June 26 Senegal qualifies knockouts
+- public social media warning scan June 26 27 2026 World Cup Norway France Senegal Iraq Uruguay Spain Cape Verde Saudi Arabia New Zealand Belgium Egypt Iran X Reddit injury suspension weather crowd warning
+
+CURRENT_SOURCE_EVENTS_USED
+- SRC_T0_FIFA_MATCH_PAGES_20260627 | T0 | checked=2026-06-27 | FIFA match-report and match-centre pages for Matchday 16 were found through Chrome search and opened; several rendered privacy/app-shell output, so they were used only for official-core coverage, not as standalone score fact setters. | url=https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/matchday-16-round-up-review-highlights | usage=control_limited
+- SRC_T1_FFF_NOR_FRA_20260627 | T1 | checked=2026-06-27 | French Football Federation official report confirms Norway 1-4 France, Ousmane Dembele first-half hat-trick, Desire Doue late goal, France group win and Sweden Round-of-32 opponent. | url=https://www.fff.fr/article/17028-dembele-fait-fondre-la-glace-4-1-.html | usage=data/control
+- SRC_T5_SPORTSCHAU_NOR_FRA_20260627 | T5 | checked=2026-06-27 | Sportschau report confirms France 4-1 Norway, Dembele hat-trick by 32 minutes, Norway rotated heavily and missed a penalty chance. | url=https://www.sportschau.de/fussball/fifa-wm-2026/dembele-gala-gegen-norwegen-frankreich-marschiert-weiter,wm-spielbericht-frankreich-norwegen-100.html | usage=data/control
+- SRC_T5_BBC_SEN_IRQ_VIDEO_20260627 | T5 | checked=2026-06-27 | BBC video metadata/article text confirms Senegal dismantled 10-man Iraq 5-0, with Iliman Ndiaye and Ismaila Sarr goal-and-assist contributions, leaving Senegal in contention for the last-32 picture. | url=https://www.bbc.com/sport/football/videos/crel3jzn5j0o | usage=data/control_limited
+- SRC_T5_ZDF_SEN_IRQ_20260627 | T5 | checked=2026-06-27 | ZDF highlight page confirms Senegal-Iraq was a five-goal Group I decider with two Pape Gueye goals and a red card; used with BBC for score/context. | url=https://www.zdf.de/video/livestreams/fifa-weltmeisterschaft-live-livestream-highlights-100/wm-2026-senegal-irak-highlights-zusammenfassung-100 | usage=control
+- SRC_T5_GUARDIAN_URU_ESP_20260627 | T5 | checked=2026-06-27 | Guardian live/report confirms Uruguay 0-1 Spain, Alex Baena goal, Spain top Group H, Uruguay eliminated, Canobbio late red card, and Cape Verde through after the Saudi draw. | url=https://www.theguardian.com/football/live/2026/jun/26/uruguay-v-spain-world-cup-2026-live | usage=data/control
+- SRC_T5_ZDF_URU_ESP_20260627 | T5 | checked=2026-06-27 | ZDF report confirms Spain 1-0 Uruguay, Muslera error on Baena goal, Spain seven points and first place, Uruguay group-stage elimination. | url=https://www.zdf.de/video/livestreams/fifa-weltmeisterschaft-live-livestream-highlights-100/wm-2026-uruguay-spanien-highlights-zusammenfassung-100 | usage=data/control
+- SRC_T5_SPORTSCHAU_CPV_KSA_20260627 | T5 | checked=2026-06-27 | Sportschau report confirms Cape Verde 0-0 Saudi Arabia, third draw in three games, second place in Group H and Round-of-32 match against Argentina. | url=https://www.sportschau.de/fussball/fifa-wm-2026/kap-verde-macht-sensation-perfekt-und-trifft-aus-argentinien,wm-spielbericht-kap-verde-saudi-arabien-100.html | usage=data/control
+- SRC_T5_RTE_NZL_BEL_EGY_IRN_20260627 | T5 | checked=2026-06-27 | RTE live/report confirms New Zealand 1-5 Belgium and Egypt 1-1 Iran; Belgium top Group G, Egypt second, Iran third pending best-third-place completion at that moment. | url=https://www.rte.ie/sport/world-cup-2026/2026/0626/1580594-world-cup-2026-new-zealand-v-belgium-egypt-v-iran/ | usage=data/control
+- SRC_T5_AJ_BEL_NZL_20260627 | T5 | checked=2026-06-27 | Al Jazeera report confirms Belgium 5-1 New Zealand, Trossard double, De Bruyne/Lukaku/Saelemaekers goals, Belgium first in Group G and New Zealand eliminated. | url=https://www.aljazeera.com/news/2026/6/27/belgium-new-zealand-fifa-world-cup-2026-trossard-lukaku-de-bruyne-saelemaekers | usage=data/control
+- SRC_T4_OLY_MD16_20260627 | T4/T5 | checked=2026-06-27 | Olympics.com Matchday 16 schedule page confirms the six Friday 26 June fixtures, kickoff times and group context; used for day-scope/control, not as score setter. | url=https://www.olympics.com/en/news/fifa-world-cup-2026-every-match-result-friday-26-june | usage=control
+- SRC_T6_PUBLIC_SOCIAL_SCAN_20260627 | T6 | checked=2026-06-27 | Public social-media warning scan via Google for X/Reddit/injury/suspension/weather/crowd warnings across NOR-FRA, SEN-IRQ, URU-ESP, CPV-KSA, NZL-BEL and EGY-IRN; social posts were not opened and no unconfirmed social item set a fact, delta, or model reason. | url=https://www.google.com/search?q=public%20social%20media%20warning%20scan%20June%2026%2027%202026%20World%20Cup%20Norway%20France%20Senegal%20Iraq%20Uruguay%20Spain%20Cape%20Verde%20Saudi%20Arabia%20New%20Zealand%20Belgium%20Egypt%20Iran%20X%20Reddit%20injury%20suspension%20weather%20crowd%20warning | usage=warning_only
+
+SOURCE_LIMITATION_NOTE
+- FIFA pages opened from current Chrome search results sometimes rendered privacy/app-shell output; they were not used as standalone fact setters.
+- Search snippets alone set no fact. Blank/about:blank pages and a 404 page were not used as sources.
+
+T7_LEGACY_IGNORED_FROM_LOADED_PRIOR_STATE
+- Loaded prior contained no active SRC_T7 rows to carry forward. No T7 source was searched, loaded, opened, cited, used, or used for calibration/model updates in this run.
+
+NEW_MATCH_COMPLETENESS_GATE
+prior_cutoff_utc: 2026-06-26T12:07:26Z
+control_list_count: 6
+- Norway-France 1-4 | completed_at_utc=2026-06-26T21:55:00Z | verified_by=SRC_T1_FFF_NOR_FRA_20260627 + SRC_T5_SPORTSCHAU_NOR_FRA_20260627
+- Senegal-Iraq 5-0 | completed_at_utc=2026-06-26T21:55:00Z | verified_by=SRC_T5_BBC_SEN_IRQ_VIDEO_20260627 + SRC_T5_ZDF_SEN_IRQ_20260627
+- Uruguay-Spain 0-1 | completed_at_utc=2026-06-27T01:55:00Z | verified_by=SRC_T5_GUARDIAN_URU_ESP_20260627 + SRC_T5_ZDF_URU_ESP_20260627
+- Cape Verde-Saudi Arabia 0-0 | completed_at_utc=2026-06-27T01:55:00Z | verified_by=SRC_T5_SPORTSCHAU_CPV_KSA_20260627 + SRC_T5_GUARDIAN_URU_ESP_20260627
+- New Zealand-Belgium 1-5 | completed_at_utc=2026-06-27T04:55:00Z | verified_by=SRC_T5_RTE_NZL_BEL_EGY_IRN_20260627 + SRC_T5_AJ_BEL_NZL_20260627
+- Egypt-Iran 1-1 | completed_at_utc=2026-06-27T04:55:00Z | verified_by=SRC_T5_RTE_NZL_BEL_EGY_IRN_20260627
+new_matches_complete: true
+
+NEW_EVENT_CHAINS_AFTER_PRIOR_STATE
+- Quellen SRC_T1_FFF_NOR_FRA_20260627 + SRC_T5_SPORTSCHAU_NOR_FRA_20260627 -> T1/T5 -> 2026-06-26T21:55:00Z -> Norway 1-4 France; Dembele-Hattrick, Doue-Tor, France gewinnt Gruppe I. -> Entitaet Frankreich/Norwegen -> peak_confirmation_and_path_control -> FQ/AMCI/TBI/CrashRisk/PathDifficulty -> Frankreich verbessert Peak und Pfad, Norwegen verliert trotz Rotationspuffer. -> Frankreich Titel 12.6 % -> 13.4 %; Norwegen 4.4 % -> 4.0 %.
+- Quellen SRC_T5_BBC_SEN_IRQ_VIDEO_20260627 + SRC_T5_ZDF_SEN_IRQ_20260627 -> T5 -> 2026-06-26T21:55:00Z -> Senegal 5-0 Iraq; Ndiaye/Sarr-Impact, Pape-Gueye-Tore und Iraq rot/zehn Mann. -> Entitaet Senegal/Iraq -> survival_with_goal_difference_surge -> FQ/TBI/SAI/CrashRisk -> Senegal oeffnet den Drittplatziertenpfad wieder, Iraq scheidet aus dem Aggregat. -> Senegal Titel 2.4 % -> 2.8 %.
+- Quellen SRC_T5_GUARDIAN_URU_ESP_20260627 + SRC_T5_ZDF_URU_ESP_20260627 -> T5 -> 2026-06-27T01:55:00Z -> Uruguay 0-1 Spain; Baena-Tor nach Muslera-Fehler, Spain gewinnt Gruppe H, Uruguay scheidet aus. -> Entitaet Spanien/Uruguay -> favourite_path_secure_and_elimination_reset -> TBI/FQ/PathDifficulty/CrashRisk -> Spanien erhaelt Platz-eins-Pfad, Uruguay-Titelpfad wird geschlossen. -> Spanien Titel 9.8 % -> 10.1 %; Uruguay 1.9 % -> 0.0 %.
+- Quellen SRC_T5_SPORTSCHAU_CPV_KSA_20260627 + SRC_T5_GUARDIAN_URU_ESP_20260627 -> T5 -> 2026-06-27T01:55:00Z -> Cape Verde 0-0 Saudi Arabia; Cape Verde wird Gruppenzweiter und trifft Argentinien, Saudi Arabia scheidet aus. -> Entitaet Restfeld -> aggregate_survival_with_elimination_offset -> PathEntropy/SAI/CrashRisk -> Cape Verde hebt Restfeldqualitaet, Saudi/Uruguay-Verlustmasse und schwerer Argentinienpfad deckeln. -> Restfeld Titel 4.1 % -> 3.9 %.
+- Quellen SRC_T5_RTE_NZL_BEL_EGY_IRN_20260627 + SRC_T5_AJ_BEL_NZL_20260627 -> T5 -> 2026-06-27T04:55:00Z -> New Zealand 1-5 Belgium; Trossard-Doppelpack, De Bruyne, Lukaku und Saelemaekers; Belgium gewinnt Gruppe G. -> Entitaet Belgien/New Zealand -> late_group_winner_attack_unlock -> FQ/TBI/AMCI/CrashRisk/PathDifficulty -> Belgien verbessert Pfad und offensive Tiefe, New Zealand scheidet aus. -> Belgien Titel 3.5 % -> 4.5 %.
+- Quellen SRC_T5_RTE_NZL_BEL_EGY_IRN_20260627 -> T5 -> 2026-06-27T04:55:00Z -> Egypt 1-1 Iran; Egypt zweiter, Iran mit aberkanntem Spaettor und unsicherem Drittplatziertenpfad. -> Entitaet Aegypten/Iran -> qualification_stability_vs_pending_third_place -> TBI/SAI/CrashRisk -> Aegypten stabilisiert K.o.-Pfad, Iran verliert Sicherheit. -> Aegypten Titel 1.5 % -> 1.7 %; Iran 0.8 % -> 0.6 %.
+
+SOURCE_QUALITY_STATE
+source_run_completed: true
+current_sources_fetched: true
+T0_core_checked: true_limited_fifa_match_pages_opened
+T1_team_checked: true
+T3_public_data_checked: true
+T4_context_checked: true
+T5_news_checked: true
+T6_social_checked: true_warning_only
+T7_calibration_checked: false_forbidden
+t7_external_forecasts_blocked: true
+no_t7_sources_loaded_or_used: true
+credibility_score: 87
+freshness_score: 100
+independence_score: 84
+specificity_score: 86
+actionability_score: 80
+source_quality_score: 87
+unresolved_blocking_conflicts: none
+unresolved_non_blocking_conflicts: FIFA pages with app-shell/privacy DOM were not used as standalone fact setters
+missing_critical_data: none
+
+BIAS_FLAGS
+recency_bias: kontrolliert; Tier-Gewichtung, Effektkappen und strikter UTC-Cutoff.
+star_bias: kontrolliert; Dembele/Trossard/Baena/VAR-Effekte an Teammechanismen und Ergebnisdaten gebunden.
+market_bias: blockiert; keine T7-Suche, keine T7-Quelle, keine Kalibrierung.
+social_hype_bias: blockiert; T6 setzt keinen Fakt.
+injury_rumor_bias: kontrolliert; unbestaetigte Social-/Rumor-Treffer setzen kein Ereignis.
+english_language_bias: reduziert durch deutsche, franzoesische und internationale Quellen, aber weiterhin sichtbar.
+regional_undercoverage: teilweise offen; Restfeld bleibt Aggregat.
+closed_data_bias: sichtbar; fehlende Premium-/xG-/Pressing-/Set-Piece-/Trainingslastdaten sind nicht blockierend.
+
+NON_BLOCKING_DATA_GAPS
+- Vollstaendige T2-Premiumdaten fehlen.
+- Vollstaendige xG-, Pressing- und Standardsituationsdaten fehlen; oeffentliche Hinweise wurden nicht als Pflichtdaten behandelt.
+- Geschlossene Trainingslastdaten sind nicht verfuegbar.
+- Einige aktuell gefundene FIFA-Seiten renderten in Chrome als Datenschutz-/App-Shell; sie wurden nicht als alleinige Faktquelle genutzt.
+- Das Restfeld ist ein Aggregat; Final-/Viertelfinal-/Early-Exit-Werte werden nicht erfunden.
+
+TITLE_PROBABILITY_PRIOR_TABLE
+rank,team,title_probability_percent,final_probability_percent,quarter_final_probability_percent,early_exit_probability_percent,crash_risk_score,main_positive_driver,main_negative_risk,confidence
+1.0,Frankreich,13.4,30.0,62.0,8.0,31.0,"4:1 gegen Norwegen: Dembele-Hattrick, Doue-Tor, 9 Punkte aus 3 Spielen und Schweden-Pfad bestaetigen Peak und Pfadkontrolle.",Norwegens Rotation senkt die Gegnerhaerte; Rest-Transition und Knockout-Varianz bleiben sichtbar.,MEDIUM
+2.0,Spanien,10.1,24.0,56.0,15.0,34.0,1:0 gegen Uruguay sichert Platz eins in Gruppe H; Baena-Tor und Ergebnisdruck wurden verwaltet.,Das Spiel blieb offensiv zaeh und wurde durch Muslera-Fehler geoeffnet; Low-Block-/Chance-Creation-Frage bleibt.,MEDIUM
+3.0,Brasilien,9.7,22.0,55.0,16.0,45.0,"3:0 gegen Schottland: Vinicius-Doppelpack, Cunha-Tor, Gruppensieg und zweite klare Kontrolle heben Peak und Pfadstabilitaet trotz Raphinha-Ausfall.",Raphinhas bestaetigte Muskelverletzung bleibt ein Rollen- und Belastungsrisiko; Schottlands Aufbaufehler erhoeht die Aussagekraft nicht voll.,MEDIUM
+4.0,England,8.5,19.0,51.0,21.0,45.0,Vier Punkte nach zwei Spielen und Bellingham/Rice-Struktur halten den Gruppenpfad offen.,"0:0 gegen Ghana: tiefer Block, spaete Kane/OReilly-Chancen ohne Ertrag und Ghana-Umschaltmomente senken FQ/AMCI leicht.",MEDIUM
+5.0,Deutschland,6.9,16.0,43.0,28.0,49.0,"Gesicherter Gruppensieg und Banktiefe halten den K.o.-Pfad offen, obwohl die Niederlage gegen Ecuador den Peak daempft.","2:1-Niederlage gegen Ecuador: fruehe Fuehrung nicht kontrolliert, Plata-Treffer und erneut sichtbare Restverteidigungs-/Resilienzfragen nach Schlotterbecks Ausfall.",MEDIUM
+6.0,Argentinien,6.6,16.0,45.0,18.0,43.0,"2:0 gegen Oesterreich: Messi-Doppelpack, neuer WM-Torrekord und gesicherter Einzug in die Round of 32 stabilisieren Peak/Leadership.",Messi-Abhaengigkeit bleibt strukturell; verschossener Elfmeter und Oesterreichs Blockphasen begrenzen den Aufschlag.,MEDIUM
+7.0,Portugal,5.3,13.0,39.0,23.0,49.0,"5:0 gegen Usbekistan: Ronaldo-Doppelpack, Mendes-Freistoss, Leao-Tor und klare Kontrolle reparieren das DR-Kongo-Remis deutlich.",Uzbekistan ist kein Elite-Test; die strukturelle Ronaldo-Abhaengigkeit und das Kolumbien-Duell deckeln den Aufschlag.,MEDIUM
+8.0,Belgien,4.5,11.0,31.0,36.0,52.0,"5:1 gegen Neuseeland: Trossard-Doppelpack, De Bruyne, Lukaku-Sofortimpact und Gruppensieg drehen den Pfad deutlich positiv.","Der Aufschlag bleibt gedeckelt, weil der erste Sieg erst im letzten Gruppenspiel kam und New Zealand ein klarer Aussenseiter war.",MEDIUM_LOW
+9.0,Norwegen,4.0,9.0,34.0,22.0,48.0,Vorheriger Round-of-32-Puffer und Haaland/Startelf-Schonung verhindern einen harten Modellabsturz.,"1:4 gegen Frankreich mit B-Elf, Strafstossfehlschuss und nun schwererem Pfad gegen Cote d Ivoire erhoehen Crash- und Pfadrisiko.",MEDIUM_LOW
+10.0,Restfeld,3.9,,,,,Kap Verde erreicht als Gruppenzweiter die K.o.-Phase; mehrere Aggregat-Teams bleiben im Feld.,"Uruguay, Saudi-Arabien, New Zealand und Iraq scheiden aus bzw. verlieren Pfadmasse; Restfeld bleibt ein Aggregat ohne Einzelteam-Titelreihe.",LOW
+11.0,Mexiko,3.8,11.0,39.0,17.0,36.0,"3:0 gegen Czechia: perfektes Gruppenmaximum, drei Clean Sheets und Heimkontext senken Pfad- und Crash-Risiko.",Die erste Halbzeit blieb gegen ein ausscheidungsbedrohtes Czechia zaeh; Heimvorteil darf nicht als neutrale Staerke ueberextrapoliert werden.,MEDIUM
+12.0,Niederlande,3.4,9.0,34.0,27.0,43.0,"3:1 gegen Tunesien: Gruppensieg, Round-of-32-Einzug und vermiedener Brasilien-Pfad verbessern Pfadkontrolle.",Das fruehere 2:2 gegen Japan bleibt als Defensiv-/Kontrollwarnung im Zustand; Tunesien ist kein Elite-Test.,MEDIUM_LOW
+13.0,Marokko,3.1,9.0,32.0,29.0,43.0,"4:2 gegen Haiti: Hakimi-Impact, Saibari-Serie und spaete Rallye sichern Platz zwei und bestaetigen Angriffstiefe.",Zwei Gegentore gegen Haiti und Rueckstandssituationen zeigen weiter Volatilitaet gegen vertikale Aussenseiter.,MEDIUM_LOW
+14.0,Ecuador,2.8,7.0,25.0,37.0,48.0,"2:1 gegen Deutschland: Comeback, Plata-Siegtreffer und bestaetigter Einzug in die Round of 32 verbessern FQ, SAI und Pfad.","Der Titelaufschlag bleibt gedeckelt, weil Deutschland bereits Gruppensieger war und Ecuador weiterhin begrenzten Elite-Peak hat.",MEDIUM_LOW
+15.0,Senegal,2.8,8.0,25.0,43.0,52.0,"5:0 gegen Iraq: hoher Sieg, Ndiaye/Sarr-Impact und Pape-Gueye-Tore verbessern FQ, TBI und Survival-Pfad.",Der Aufschlag bleibt durch vorherige Null-Punkte-Lage und Abhaengigkeit vom Drittplatziertenpfad begrenzt.,MEDIUM_LOW
+16.0,USA,1.8,5.0,25.0,42.0,55.0,Die USA bleiben Gruppensieger und erreichen die K.o.-Runde mit sechs Punkten; die Offensive erzielte im Gruppenverlauf viel Volumen.,3:2-Niederlage gegen bereits ausgeschiedene Turkiye mit spaetem Gegentor erhoeht Spielkontroll- und Crash-Risiko.,LOW_MEDIUM
+17.0,Schweiz,1.8,6.0,25.0,31.0,43.0,"2:1 gegen Kanada: Manzambi kreiert und trifft, Gruppensieg haelt den K.o.-Start in British Columbia und bestaetigt Bank-/Anpassungswert.",Kanada kam durch Promise David zurueck; knappe Schlussphase und begrenzter Elite-Peak deckeln den Titelaufschlag.,LOW_MEDIUM
+18.0,Kroatien,1.7,4.0,20.0,44.0,56.0,"1:0 gegen Panama: Budimir-Impact, Modric-Jubilaeum und erhaltener Gruppenpfad stabilisieren Kroatien nach der Auftaktniederlage.",Panama war im ersten Durchgang gefaehrlich; knapper Sieg und begrenzte Chance-Creation lassen hohes Volatilitaetsrisiko bestehen.,LOW_MEDIUM
+19.0,Aegypten,1.7,7.0,27.0,32.0,42.0,"1:1 gegen Iran reicht fuer Platz zwei; fruehes Saber-Tor, Salah-Struktur und Australien-Pfad stabilisieren das K.o.-Profil.","VAR-Rettung, Taremi-/Iran-Druck und nur Remis im letzten Gruppenspiel begrenzen den Aufschlag.",MEDIUM
+20.0,Kanada,1.5,5.0,21.0,48.0,57.0,Trotz 1:2 gegen die Schweiz ist Kanada erstmals in der K.o.-Phase und behaelt Heim-/Fanresilienz im Modell.,"Niederlage gegen die Schweiz, Reise nach Kalifornien und Kone-Ausfall erhoehen Pfad- und Crash-Risiko deutlich.",LOW_MEDIUM
+21.0,Oesterreich,1.1,3.0,16.0,64.0,58.0,Phasenweise disziplinierte Blocks gegen Argentinien und drei Punkte aus dem Auftakt halten einen engen Qualifikationspfad offen.,0:2 gegen Argentinien; Messi-Doppelpack und geringe eigene Durchschlagskraft erhoehen Pfad- und Crash-Risiko.,LOW_MEDIUM
+22.0,Australien,1.0,4.0,17.0,53.0,54.0,0:0 gegen Paraguay reicht zum Round-of-32-Einzug als Gruppenzweiter; Australien schuetzt den Pfad unter Druck.,Geringe Durchschlagskraft im torlosen Spiel und enger K.o.-Pfad begrenzen den Titelaufschlag.,LOW_MEDIUM
+23.0,Iran,0.6,1.5,10.0,70.0,72.0,1:1 gegen Aegypten und spaeter Druck halten einen schmalen Best-Dritter-Restpfad offen.,"VAR-aberkanntes Spaettor, Aluminiumtreffer und ungesicherter Drittplatziertenstatus erhoehen Early-Exit- und Crash-Risiko.",LOW
+24.0,Uruguay,0.0,0.0,0.0,100.0,100.0,Kein verbleibender Titelpfad nach der Gruppenphase; fruehere Offensivqualitaet hat keine Modellwirkung mehr.,"0:1 gegen Spanien, Baena-Tor nach Muslera-Fehler, Canobbio-Rot und bestaetigtes Ausscheiden setzen Titelchance auf null.",LOW_MEDIUM
+25.0,Tuerkei,0.0,0.0,0.0,100.0,100.0,"3:2 gegen USA bestaetigt Moral und Arda-Gueler/Ayhan-Impact, kommt aber nach bestaetigtem Ausscheiden zu spaet.",Keine verbleibende Titelchance nach vorherigem Ausscheiden; der Sieg setzt keinen Titelpfad wieder in Kraft.,LOW_MEDIUM
+
+INDEX_PRIOR_TABLE
+team,affected_indices,direction,D_prior,D_current,mechanism
+Frankreich,FQ/AMCI/TBI/SAI/PathDifficulty/CrashRisk,"positiv, rotationsgegner-gekappt",72.8,74.1,4:1 gegen Norwegen mit Dembele-Hattrick und Gruppensieg bestaetigt Peak; Norwegens B-Elf begrenzt den Aufschlag.
+Norwegen,FQ/AMCI/PathDifficulty/CrashRisk,"negativ, rotationspuffer",63.0,61.6,"1:4 gegen Frankreich, verpasster Elfmeter und schwererer K.o.-Pfad; Schonung der Stammspieler verhindert harten Einbruch."
+Senegal,FQ/TBI/SAI/CrashRisk,"positiv, pfadabhaengig",46.0,49.3,5:0 gegen Iraq und bessere Tordifferenz oeffnen Drittplatziertenpfad; vorherige Null-Punkte-Lage deckelt.
+Spanien,TBI/FQ/PathDifficulty/CrashRisk,"leicht positiv, performance-gekappt",71.0,71.7,1:0 gegen Uruguay bringt Gruppensieg; zaehe Offensive und Torwartfehler als Ausloeser begrenzen FQ-Aufschlag.
+Uruguay,TBI/FQ/SAI/CrashRisk,"negativ, elimination",46.0,0.0,0:1 gegen Spanien und Gruppen-Aus schliessen Titelpfad vollstaendig.
+Restfeld,PathEntropy/FQ/SAI,"leicht negativ, intern gegenlaeufig",33.8,33.4,"Cape Verde positiv, aber Uruguay/Saudi Arabia/New Zealand/Iraq entfernen aggregierte Pfadmasse."
+Belgien,FQ/TBI/AMCI/CrashRisk,"positiv, prior-crash-gekappt",50.0,54.2,5:1 gegen New Zealand und Gruppensieg reparieren Pfad; erster Sieg erst im letzten Gruppenspiel deckelt.
+Aegypten,TBI/SAI/CrashRisk,"leicht positiv, var-gekappt",48.0,49.0,1:1 gegen Iran reicht fuer Platz zwei; spaeter Iran-Druck begrenzt.
+Iran,TBI/SAI/CrashRisk,"negativ, pending-third-place",43.0,41.0,"1:1, aber aberkanntes Spaettor und unsicherer Drittplatziertenpfad erhoehen Early-Exit-Risiko."
+Brasilien,FQ/AMCI/SAI/PathDifficulty/CrashRisk,unveraendert aus Prior-State,65.0,67.8,"3:0 gegen Schottland, Vinicius-Doppelpack, Cunha-Tor und Gruppensieg bestaetigen Peak; Raphinha-Ausfall und Gegnerfehler begrenzen."
+Mexiko,TBI/FQ/SAI/PathDifficulty/CrashRisk,unveraendert aus Prior-State,55.4,58.1,"3:0 gegen Czechia, perfektes Gruppenmaximum und drei Clean Sheets verbessern Pfad; konservative Startphase begrenzt."
+Marokko,FQ/AMCI/SAI/CrashRisk,unveraendert aus Prior-State,53.2,54.4,4:2 gegen Haiti zeigt Angriffstiefe und Comeback; zwei Gegentore gegen Haiti halten Volatilitaet sichtbar.
+Schweiz,TBI/FQ/SAI/PathDifficulty/CrashRisk,unveraendert aus Prior-State,49.0,51.0,2:1 gegen Kanada und Gruppensieg verbessern K.o.-Pfad; knappe Schlussphase begrenzt.
+Kanada,PathDifficulty/SAI/CrashRisk,unveraendert aus Prior-State,51.2,49.7,1:2 gegen Schweiz und Reise nach Kalifornien erhoehen Pfadlast; erste K.o.-Qualifikation haelt Puffer.
+Portugal,FQ/AMCI/TBI/SAI/PathDifficulty/CrashRisk,unveraendert aus Prior-State,60.2,62.6,"5:0, Ronaldo-Doppelpack und breite Torschuetzen reparieren das DR-Kongo-Remis; Kolumbien-Spiel und Ronaldo-Abhaengigkeit begrenzen."
+England,FQ/AMCI/SAI/PathDifficulty/CrashRisk,unveraendert aus Prior-State,74.0,72.5,0:0 gegen Ghana senkt Low-Block-Konversion und Anpassung; vier Punkte und Top-2-Pfad begrenzen.
+Kroatien,FQ/TBI/SAI/PathDifficulty/CrashRisk,unveraendert aus Prior-State,48.8,50.1,Budimir-Siegtreffer und erhaltener Gruppenpfad verbessern Survival-Wert; Panamas Chancen deckeln.
+Alle uebrigen Teams,unveraendert,unveraendert,,,Kein vollstaendiges Post-Prior-Ereignis; keine kuenstlichen Deltas.
+
+CRASH_RISK_PRIOR_TABLE
+Frankreich,31.0,Norwegens Rotation senkt die Gegnerhaerte; Rest-Transition und Knockout-Varianz bleiben sichtbar.
+Spanien,34.0,Das Spiel blieb offensiv zaeh und wurde durch Muslera-Fehler geoeffnet; Low-Block-/Chance-Creation-Frage bleibt.
+Brasilien,45.0,Raphinhas bestaetigte Muskelverletzung bleibt ein Rollen- und Belastungsrisiko; Schottlands Aufbaufehler erhoeht die Aussagekraft nicht voll.
+England,45.0,0:0 gegen Ghana: tiefer Block, spaete Kane/OReilly-Chancen ohne Ertrag und Ghana-Umschaltmomente senken FQ/AMCI leicht.
+Deutschland,49.0,2:1-Niederlage gegen Ecuador: fruehe Fuehrung nicht kontrolliert, Plata-Treffer und erneut sichtbare Restverteidigungs-/Resilienzfragen nach Schlotterbecks Ausfall.
+Argentinien,43.0,Messi-Abhaengigkeit bleibt strukturell; verschossener Elfmeter und Oesterreichs Blockphasen begrenzen den Aufschlag.
+Portugal,49.0,Uzbekistan ist kein Elite-Test; die strukturelle Ronaldo-Abhaengigkeit und das Kolumbien-Duell deckeln den Aufschlag.
+Belgien,52.0,Der Aufschlag bleibt gedeckelt, weil der erste Sieg erst im letzten Gruppenspiel kam und New Zealand ein klarer Aussenseiter war.
+Norwegen,48.0,1:4 gegen Frankreich mit B-Elf, Strafstossfehlschuss und nun schwererem Pfad gegen Cote d Ivoire erhoehen Crash- und Pfadrisiko.
+Restfeld,,Uruguay, Saudi-Arabien, New Zealand und Iraq scheiden aus bzw. verlieren Pfadmasse; Restfeld bleibt ein Aggregat ohne Einzelteam-Titelreihe.
+Mexiko,36.0,Die erste Halbzeit blieb gegen ein ausscheidungsbedrohtes Czechia zaeh; Heimvorteil darf nicht als neutrale Staerke ueberextrapoliert werden.
+Niederlande,43.0,Das fruehere 2:2 gegen Japan bleibt als Defensiv-/Kontrollwarnung im Zustand; Tunesien ist kein Elite-Test.
+Marokko,43.0,Zwei Gegentore gegen Haiti und Rueckstandssituationen zeigen weiter Volatilitaet gegen vertikale Aussenseiter.
+Ecuador,48.0,Der Titelaufschlag bleibt gedeckelt, weil Deutschland bereits Gruppensieger war und Ecuador weiterhin begrenzten Elite-Peak hat.
+Senegal,52.0,Der Aufschlag bleibt durch vorherige Null-Punkte-Lage und Abhaengigkeit vom Drittplatziertenpfad begrenzt.
+USA,55.0,3:2-Niederlage gegen bereits ausgeschiedene Turkiye mit spaetem Gegentor erhoeht Spielkontroll- und Crash-Risiko.
+Schweiz,43.0,Kanada kam durch Promise David zurueck; knappe Schlussphase und begrenzter Elite-Peak deckeln den Titelaufschlag.
+Kroatien,56.0,Panama war im ersten Durchgang gefaehrlich; knapper Sieg und begrenzte Chance-Creation lassen hohes Volatilitaetsrisiko bestehen.
+Aegypten,42.0,VAR-Rettung, Taremi-/Iran-Druck und nur Remis im letzten Gruppenspiel begrenzen den Aufschlag.
+Kanada,57.0,Niederlage gegen die Schweiz, Reise nach Kalifornien und Kone-Ausfall erhoehen Pfad- und Crash-Risiko deutlich.
+Oesterreich,58.0,0:2 gegen Argentinien; Messi-Doppelpack und geringe eigene Durchschlagskraft erhoehen Pfad- und Crash-Risiko.
+Australien,54.0,Geringe Durchschlagskraft im torlosen Spiel und enger K.o.-Pfad begrenzen den Titelaufschlag.
+Iran,72.0,VAR-aberkanntes Spaettor, Aluminiumtreffer und ungesicherter Drittplatziertenstatus erhoehen Early-Exit- und Crash-Risiko.
+Uruguay,100.0,0:1 gegen Spanien, Baena-Tor nach Muslera-Fehler, Canobbio-Rot und bestaetigtes Ausscheiden setzen Titelchance auf null.
+Tuerkei,100.0,Keine verbleibende Titelchance nach vorherigem Ausscheiden; der Sieg setzt keinen Titelpfad wieder in Kraft.
+
+CAUSAL_CHAINS_CURRENT
+- Quellen SRC_T1_FFF_NOR_FRA_20260627 + SRC_T5_SPORTSCHAU_NOR_FRA_20260627 -> T1/T5 -> 2026-06-26T21:55:00Z -> Norway 1-4 France; Dembele-Hattrick, Doue-Tor, France gewinnt Gruppe I. -> Entitaet Frankreich/Norwegen -> peak_confirmation_and_path_control -> FQ/AMCI/TBI/CrashRisk/PathDifficulty -> Frankreich verbessert Peak und Pfad, Norwegen verliert trotz Rotationspuffer. -> Frankreich Titel 12.6 % -> 13.4 %; Norwegen 4.4 % -> 4.0 %.
+- Quellen SRC_T5_BBC_SEN_IRQ_VIDEO_20260627 + SRC_T5_ZDF_SEN_IRQ_20260627 -> T5 -> 2026-06-26T21:55:00Z -> Senegal 5-0 Iraq; Ndiaye/Sarr-Impact, Pape-Gueye-Tore und Iraq rot/zehn Mann. -> Entitaet Senegal/Iraq -> survival_with_goal_difference_surge -> FQ/TBI/SAI/CrashRisk -> Senegal oeffnet den Drittplatziertenpfad wieder, Iraq scheidet aus dem Aggregat. -> Senegal Titel 2.4 % -> 2.8 %.
+- Quellen SRC_T5_GUARDIAN_URU_ESP_20260627 + SRC_T5_ZDF_URU_ESP_20260627 -> T5 -> 2026-06-27T01:55:00Z -> Uruguay 0-1 Spain; Baena-Tor nach Muslera-Fehler, Spain gewinnt Gruppe H, Uruguay scheidet aus. -> Entitaet Spanien/Uruguay -> favourite_path_secure_and_elimination_reset -> TBI/FQ/PathDifficulty/CrashRisk -> Spanien erhaelt Platz-eins-Pfad, Uruguay-Titelpfad wird geschlossen. -> Spanien Titel 9.8 % -> 10.1 %; Uruguay 1.9 % -> 0.0 %.
+- Quellen SRC_T5_SPORTSCHAU_CPV_KSA_20260627 + SRC_T5_GUARDIAN_URU_ESP_20260627 -> T5 -> 2026-06-27T01:55:00Z -> Cape Verde 0-0 Saudi Arabia; Cape Verde wird Gruppenzweiter und trifft Argentinien, Saudi Arabia scheidet aus. -> Entitaet Restfeld -> aggregate_survival_with_elimination_offset -> PathEntropy/SAI/CrashRisk -> Cape Verde hebt Restfeldqualitaet, Saudi/Uruguay-Verlustmasse und schwerer Argentinienpfad deckeln. -> Restfeld Titel 4.1 % -> 3.9 %.
+- Quellen SRC_T5_RTE_NZL_BEL_EGY_IRN_20260627 + SRC_T5_AJ_BEL_NZL_20260627 -> T5 -> 2026-06-27T04:55:00Z -> New Zealand 1-5 Belgium; Trossard-Doppelpack, De Bruyne, Lukaku und Saelemaekers; Belgium gewinnt Gruppe G. -> Entitaet Belgien/New Zealand -> late_group_winner_attack_unlock -> FQ/TBI/AMCI/CrashRisk/PathDifficulty -> Belgien verbessert Pfad und offensive Tiefe, New Zealand scheidet aus. -> Belgien Titel 3.5 % -> 4.5 %.
+- Quellen SRC_T5_RTE_NZL_BEL_EGY_IRN_20260627 -> T5 -> 2026-06-27T04:55:00Z -> Egypt 1-1 Iran; Egypt zweiter, Iran mit aberkanntem Spaettor und unsicherem Drittplatziertenpfad. -> Entitaet Aegypten/Iran -> qualification_stability_vs_pending_third_place -> TBI/SAI/CrashRisk -> Aegypten stabilisiert K.o.-Pfad, Iran verliert Sicherheit. -> Aegypten Titel 1.5 % -> 1.7 %; Iran 0.8 % -> 0.6 %.
+
+NEXT_OBSERVATION_VARIABLES_FOR_NEXT_RUN
+Iran: Best-third-place-Status nach Abschluss der restlichen Gruppen.
+France-Sweden, Spain/Gruppenzweiter-J, Belgium-South Korea, Egypt-Australia, Argentina-Cape Verde und Ivory Coast-Norway: K.o.-Pfad, Reise- und Belastungsprofil.
+Restfeld: Cape Verde-Survival gegen neue Ausscheidungen.
+T6: erneuter oeffentlicher Social-Media-Warnscan ohne Faktsetzung.
+
+AUDIT_SUMMARY_CURRENT
+current_sources_fetched: true
+source_run_completed: true
+T0_core_checked: true_limited_fifa_pages_opened
+T1_team_checked: true
+T3_public_data_checked: true
+T4_context_checked: true
+T5_news_checked: true
+T6_social_checked: true_warning_only
+T7_external_forecasts_blocked: true
+no_t7_sources_loaded_or_used: true
+social_media_sets_no_fact: true
+new_matches_complete: true
+probability_sum_passed: true 100.0
+probability_monotone_nonincreasing: true
+ranks_gapless_1_to_25: true
+same_order_de_html_en_html_prior_table: true
+prior_state_lossless_check_team_count_equal: true 25=25
+artifact_audit_passed: true
+prior_state_used_only_as_prior: true
+post_prior_event_search_completed: true
+same_day_cutoff_tiebreak_applied: true
+all_deltas_have_new_event_chain: true
+no_delta_without_post_prior_source: true
+no_synthetic_delta_created: true
+matchup_matrix_built: true
+path_simulation_completed: true
+simulation_seed_fixed: true
+simulation_iterations_100000: true
+every_changed_output_has_causal_chain: true
+confidence_not_above_data_quality: true
+bias_flags_visible: true
+self_correction_required: false
+audit_passed: true
+artifact_audit_passed: true
+
+LOSSLESS_PRIOR_STATE_CARRY_FORWARD_AUDIT
+loaded_prior_team_count: 25
+new_prior_team_count: 25
+mandatory_sections_carried_forward: RUN_METADATA, SEARCH_QUERIES_USED, CURRENT_SOURCE_EVENTS_USED, NEW_MATCH_COMPLETENESS_GATE, NEW_EVENT_CHAINS_AFTER_PRIOR_STATE, SOURCE_QUALITY_STATE, BIAS_FLAGS, NON_BLOCKING_DATA_GAPS, TITLE_PROBABILITY_PRIOR_TABLE, INDEX_PRIOR_TABLE, CRASH_RISK_PRIOR_TABLE, CAUSAL_CHAINS_CURRENT, NEXT_OBSERVATION_VARIABLES_FOR_NEXT_RUN, AUDIT_SUMMARY_CURRENT
+unaffected_team_rows_semantically_unchanged: true
+removed_or_shortened_unaffected_state_details: none
+legacy_full_prior_embedding_removed_from_current_state: true_because_new_state_is_self_contained_and_not_allowed_to_depend_on_older_prior_files

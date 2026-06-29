@@ -1,0 +1,972 @@
+DYNAMO-26 PIPELINE SPEC v1.0
+Deterministischer Executor-Entwurf
+Sprache: Deutsch
+Ziel: Ein vollständig prüfbarer, quellengetriebener Tageslauf zur Bewertung von WM-2026-Titelstabilität.
+
+============================================================
+0. GRUNDPRINZIP
+============================================================
+
+Diese Spezifikation beschreibt keinen Fließtext-Prompt und keine lose Checkliste.
+Sie beschreibt einen deterministischen Ablauf.
+
+Jeder Schritt hat:
+- Eingabe
+- Pflichtaktion
+- Rückgabeobjekt
+- Gate
+- Audit
+
+Ein Schritt darf erst verlassen werden, wenn sein Rückgabeobjekt vollständig ist.
+Ein späterer Schritt darf keine Daten erfinden, die ein früherer Schritt nicht geliefert hat.
+
+============================================================
+1. FESTE REGELN
+============================================================
+
+RULE_01:
+Ohne aktuellen Quellenlauf gibt es keine aktuelle Prognose.
+
+RULE_02:
+Ein gespeicherter Vorzustand ist nur ein Vorzustand.
+Er ist keine aktuelle Quelle.
+
+RULE_03:
+Wahrscheinlichkeiten dürfen nur ausgegeben werden, wenn:
+- aktuelle Quellen geprüft wurden,
+- Quellenqualität ausreichend ist,
+- keine blockierenden Konflikte offen sind,
+- Teamzustände berechnet wurden,
+- Pfadsimulation abgeschlossen wurde,
+- Wahrscheinlichkeiten auf 100 Prozent normalisiert wurden,
+- Audit bestanden wurde.
+
+RULE_04:
+T7 ist vollständig verboten.
+Externe Prognosen, Projektionen, Buchmacherquoten, Elo-/Ranking-Prognosen, FIFA-Ranking als Prognoseersatz oder Medien-Wahrscheinlichkeiten dürfen nicht gesucht, geladen, geöffnet, zitiert, gespeichert, zur Kalibrierung verwendet oder anderweitig verwertet werden.
+Wenn eine Websuche solche Treffer liefert, werden sie ignoriert und nicht geöffnet.
+Legacy-SRC_T7-Einträge aus älteren Prior-States dürfen nicht als aktive Quellen übernommen, aktualisiert oder ausgewertet werden.
+Falls sie zur Nachvollziehbarkeit erwähnt werden müssen, dann nur als ignorierte Legacy-Information ohne Modellwirkung.
+
+RULE_05:
+Social-Media-Signale dürfen ohne Bestätigung keinen Fakt setzen.
+
+RULE_06:
+Fehlende geschlossene Premiumdaten blockieren den Lauf nicht automatisch.
+Sie erzeugen Unsicherheitsflags und können die Konfidenz reduzieren.
+
+RULE_07:
+Jede finale OUTPUT-Aussage braucht eine Kausalkette:
+Ursache -> Mechanismus -> Effekt -> Bedingung
+
+RULE_08:
+Am Ende müssen drei Dateien erzeugt werden:
+- HTML-Ausgabe
+- Prior-State-TXT für den nächsten Lauf
+- kurze Änderungs-TXT
+
+RULE_09:
+Wenn Pflichtartefakte fehlen, darf keine finale Antwort ausgeliefert werden.
+
+============================================================
+2. DATENOBJEKTE
+============================================================
+
+OBJECT RunContext
+fields:
+  run_id
+  run_date
+  run_mode
+  model_name
+  model_version
+  output_status
+  confidence_level
+  run_result_type
+  audit_passed
+  artifact_audit_passed
+
+OBJECT SourceRecord
+fields:
+  source_id
+  url
+  title
+  publisher
+  published_at
+  fetched_at
+  tier
+  claim_text
+  affected_entity
+  claim_type
+  credibility_score
+  freshness_score
+  independence_score
+  specificity_score
+  actionability_score
+
+OBJECT SourceRun
+fields:
+  completed
+  fetched_at
+  source_records
+  t0_core_checked
+  t1_team_checked
+  t3_public_data_checked
+  t4_context_checked
+  t5_news_checked
+  t6_social_checked
+  t7_external_forecasts_blocked
+
+OBJECT SourceQualityResult
+fields:
+  credibility_score
+  freshness_score
+  independence_score
+  specificity_score
+  actionability_score
+  total_score
+  unresolved_blocking_conflicts
+  unresolved_non_blocking_conflicts
+  critical_missing_data
+  non_blocking_data_gaps
+
+OBJECT BiasResult
+fields:
+  recency_bias_flag
+  star_bias_flag
+  market_bias_flag
+  social_hype_bias_flag
+  injury_rumor_bias_flag
+  english_language_bias_flag
+  regional_undercoverage_flag
+  closed_data_bias_flag
+  confidence_adjustments
+
+OBJECT PriorState
+fields:
+  exists
+  created_at_run_date
+  model_version
+  teams
+  title_probabilities
+  index_values
+  crash_risks
+  uncertainty_flags
+  prior_causal_chains
+
+OBJECT EventSignal
+fields:
+  event_id
+  source_id
+  source_tier
+  event_date
+  event_after_prior_state
+  affected_entity
+  team
+  player
+  signal_type
+  affected_index
+  observed_signal_value
+  confidence
+  max_model_effect
+  causal_event_chain
+
+OBJECT TeamState
+fields:
+  team_id
+  team_name
+  current_status
+  SCI
+  TBI
+  CSI
+  AMCI
+  SAI
+  FQ
+  D
+  crash_risk
+  title_probability
+  final_probability
+  quarter_final_probability
+  early_exit_probability
+  confidence_level
+  uncertainty_flags
+  positive_driver
+  negative_risk
+
+OBJECT ProbabilityResult
+fields:
+  probabilities_by_team
+  probability_sum
+  normalization_passed
+  simulation_method
+  seed
+  iterations
+
+OBJECT AuditResult
+fields:
+  passed
+  failed_checks
+  correction_target
+  notes
+
+OBJECT ArtifactResult
+fields:
+  html_file_created
+  prior_state_file_created
+  changes_file_created
+  html_validation_passed
+  prior_state_validation_passed
+  changes_validation_passed
+  download_links_available
+
+============================================================
+3. INDEXFORMELN
+============================================================
+
+Alle Indexwerte liegen zwischen 0 und 100.
+
+SCI = Structural Capacity Index
+TBI = Tournament Body Index
+CSI = Contextual Strain Index
+AMCI = Adaptive Match Control Index
+SAI = Shock Absorption Index
+FQ = Form Quality Index
+
+CSI ist negativ gerichtet.
+Höherer CSI bedeutet höhere Belastung.
+
+DYNAMO_STRENGTH:
+D = 0.22*SCI + 0.20*TBI + 0.18*AMCI + 0.16*SAI + 0.14*FQ - 0.10*CSI
+
+CRASH_RISK:
+CrashRisk =
+0.18*low_chance_creation
++ 0.17*high_transition_exposure
++ 0.15*thin_squad_risk
++ 0.14*set_piece_weakness
++ 0.13*contextual_strain_pressure
++ 0.12*psychological_fragility
++ 0.11*path_difficulty
+
+INDEX_UPDATE:
+index_new = (1 - lambda) * index_old + lambda * observed_signal
+
+LAMBDA_BOUNDS:
+min = 0.02
+max = 0.45
+
+============================================================
+4. PIPELINE
+============================================================
+
+function RUN_PIPELINE(input):
+
+  context = INIT_RUN(input)
+
+  model = LOAD_MODEL(context)
+
+  prior_state = LOAD_PRIOR_STATE(input.prior_state_file)
+
+  source_plan = BUILD_SOURCE_PLAN(model, prior_state)
+
+  source_run = FETCH_CURRENT_SOURCES(source_plan)
+
+  if source_run.completed == false:
+      context.output_status = "NOT_CURRENT"
+      output = RENDER_NOT_CURRENT(context, source_run)
+      artifacts = EXPORT_ARTIFACTS(context, output, prior_state, empty_changes)
+      artifact_audit = AUDIT_ARTIFACTS(artifacts)
+      finalization = FINALIZE_RUN(context, artifacts, artifact_audit)
+      return DELIVER(context, output, artifacts, artifact_audit, finalization)
+
+  classified_sources = CLASSIFY_SOURCES(source_run)
+
+  source_quality = AUDIT_SOURCE_QUALITY(classified_sources)
+
+  bias_result = AUDIT_BIAS(classified_sources, source_quality)
+
+  status_gate = DETERMINE_OUTPUT_STATUS(source_run, source_quality)
+
+  if status_gate.output_status == "NOT_CURRENT":
+      context.output_status = "NOT_CURRENT"
+      output = RENDER_NOT_CURRENT(context, status_gate)
+      artifacts = EXPORT_ARTIFACTS(context, output, prior_state, empty_changes)
+      artifact_audit = AUDIT_ARTIFACTS(artifacts)
+      finalization = FINALIZE_RUN(context, artifacts, artifact_audit)
+      return DELIVER(context, output, artifacts, artifact_audit, finalization)
+
+  entities = RESOLVE_ENTITIES(classified_sources, prior_state)
+
+  signals = EXTRACT_EVENT_SIGNALS(classified_sources, entities, prior_state)
+
+  completeness = CHECK_INPUT_COMPLETENESS(source_run, source_quality, signals)
+
+  context.output_status = DETERMINE_OUTPUT_STATUS(source_run, source_quality, completeness)
+
+  if context.output_status == "NOT_CURRENT":
+      output = RENDER_NOT_CURRENT(context, completeness)
+      artifacts = EXPORT_ARTIFACTS(context, output, prior_state, empty_changes)
+      artifact_audit = AUDIT_ARTIFACTS(artifacts)
+      finalization = FINALIZE_RUN(context, artifacts, artifact_audit)
+      return DELIVER(context, output, artifacts, artifact_audit, finalization)
+
+  normalized_signals = NORMALIZE_SIGNALS(signals)
+
+  team_states = BUILD_TEAM_STATES(prior_state, entities)
+
+  event_update_result = APPLY_EVENT_UPDATES(team_states, normalized_signals)
+
+  team_states = RECALCULATE_INDICES(team_states, event_update_result)
+
+  team_states = CALCULATE_DYNAMIC_STRENGTH(team_states)
+
+  matchup_matrix = BUILD_MATCHUP_MATRIX(team_states)
+
+  path_result = SIMULATE_PATHS(matchup_matrix, team_states)
+
+  probability_result = NORMALIZE_PROBABILITIES(path_result)
+
+  team_states = ATTACH_PROBABILITIES(team_states, probability_result)
+
+  team_states = CALCULATE_CRASH_RISK(team_states, path_result)
+
+  causal_chains = GENERATE_CAUSAL_CHAINS(team_states, signals, probability_result)
+
+  audit = AUDIT_MODEL(
+      context,
+      source_run,
+      source_quality,
+      bias_result,
+      signals,
+      team_states,
+      probability_result,
+      causal_chains
+  )
+
+  correction_count = 0
+
+  while audit.passed == false and correction_count < 3:
+      correction = SELF_CORRECT(audit)
+      APPLY_CORRECTION(correction)
+      audit = AUDIT_MODEL(...)
+      correction_count = correction_count + 1
+
+  if audit.passed == false:
+      context.output_status = DOWNGRADE_STATUS(audit)
+
+  output = RENDER_OUTPUT(
+      context,
+      source_run,
+      source_quality,
+      bias_result,
+      team_states,
+      probability_result,
+      causal_chains,
+      audit
+  )
+
+  changes = BUILD_CHANGE_SUMMARY(prior_state, team_states, signals)
+
+  artifacts = EXPORT_ARTIFACTS(context, output, team_states, probability_result, causal_chains, changes)
+
+  artifact_audit = AUDIT_ARTIFACTS(artifacts)
+
+  if artifact_audit.passed == false:
+      artifacts = EXPORT_ARTIFACTS(context, output, team_states, probability_result, causal_chains, changes)
+      artifact_audit = AUDIT_ARTIFACTS(artifacts)
+
+  finalization = FINALIZE_RUN(context, artifacts, artifact_audit, audit)
+
+  return DELIVER(context, output, artifacts, artifact_audit, finalization)
+
+============================================================
+5. FUNKTIONEN
+============================================================
+
+function INIT_RUN(input):
+  required actions:
+    - run_date setzen
+    - run_mode setzen
+    - output_status = UNKNOWN setzen
+    - audit_passed = false setzen
+    - artifact_audit_passed = false setzen
+  returns:
+    RunContext
+
+function LOAD_MODEL(context):
+  required actions:
+    - Indizes laden
+    - Formeln laden
+    - Quellenregeln laden
+    - Biasregeln laden
+    - Update-Regeln laden
+    - Artefaktregeln laden
+  returns:
+    ModelConfig
+
+function LOAD_PRIOR_STATE(prior_state_file):
+  required actions:
+    - Datei prüfen
+    - created_at_run_date extrahieren
+    - Wahrscheinlichkeiten extrahieren
+    - Indexwerte extrahieren
+    - Crash-Risiken extrahieren
+    - Unsicherheitsflags extrahieren
+  if no prior_state_file:
+    - exists = false
+  returns:
+    PriorState
+
+function BUILD_SOURCE_PLAN(model, prior_state):
+  required source classes:
+    - T0 official tournament core
+    - T1 official team/federation information
+    - T3 public match and lineup data
+    - T4 venue, weather, travel, altitude, rest context
+    - T5 reputable news
+    - T6 social warning only
+  forbidden source classes:
+    - T7 external forecasts, projections, bookmaker odds, Elo-/ranking-based title predictions, media probabilities
+  returns:
+    SourcePlan
+
+function FETCH_CURRENT_SOURCES(source_plan):
+  required actions:
+    - T0 core abrufen
+    - T1 team sources abrufen
+    - T3 public data abrufen
+    - T4 context data abrufen
+    - T5 reputable news abrufen
+    - T6 nur als Warnsignal prüfen
+    - T7 nicht suchen, nicht laden, nicht öffnen und nicht verwenden
+  returns:
+    SourceRun
+
+function CLASSIFY_SOURCES(source_run):
+  required actions:
+    - jede Quelle einem Tier zuordnen
+    - jede Aussage als DATA markieren
+    - Fakten von Interpretation trennen
+    - Social Media ohne Bestätigung als warning_only markieren
+  returns:
+    list of SourceRecord
+
+function AUDIT_SOURCE_QUALITY(classified_sources):
+  required actions:
+    - credibility_score berechnen
+    - freshness_score berechnen
+    - independence_score berechnen
+    - specificity_score berechnen
+    - actionability_score berechnen
+    - total_score berechnen
+    - Konflikte trennen in blocking und non_blocking
+    - fehlende Daten trennen in critical und non_blocking
+  returns:
+    SourceQualityResult
+
+function AUDIT_BIAS(classified_sources, source_quality):
+  required checks:
+    - recency bias
+    - star bias
+    - market bias
+    - social hype bias
+    - injury rumor bias
+    - english language bias
+    - regional undercoverage
+    - closed data bias
+  returns:
+    BiasResult
+
+function DETERMINE_OUTPUT_STATUS(source_run, source_quality, completeness optional):
+  if source_run.completed == false:
+      return NOT_CURRENT
+  if source_quality.total_score < 60:
+      return NOT_CURRENT
+  if source_quality.unresolved_blocking_conflicts not empty:
+      return NOT_CURRENT
+  if source_quality.critical_missing_data not empty:
+      return NOT_CURRENT
+  if source_quality.total_score >= 75:
+      return CURRENT
+  if source_quality.total_score >= 60:
+      return DEGRADED
+
+function RESOLVE_ENTITIES(classified_sources, prior_state):
+  required actions:
+    - Teamnamen normalisieren
+    - Spielernamen normalisieren
+    - Spielorte normalisieren
+    - Teamstatus prüfen
+    - nicht qualifizierte Teams aus aktivem Modelluniversum entfernen
+  returns:
+    EntityMap
+
+function EXTRACT_EVENT_SIGNALS(classified_sources, entities, prior_state):
+  required actions:
+    - nur Quellen nach prior_state.created_at_run_date als neue Events behandeln
+    - Quelle -> Tier -> Datum -> Event -> Entität -> Signaltyp -> Indexwirkung erzeugen
+    - Social-only-Signale begrenzen
+    - T7 vollständig ausschließen; keine calibration_only-Ausnahme
+    - fehlende Premiumdaten als uncertainty_flag markieren
+  returns:
+    list of EventSignal
+
+function CHECK_INPUT_COMPLETENESS(source_run, source_quality, signals):
+  required for CURRENT or DEGRADED:
+    - aktueller offizieller Turnierkern vorhanden
+    - aktuelle Team-/Availability-Daten mindestens mittel
+    - aktuelle Kontextdaten mindestens mittel
+    - keine blockierenden Konflikte
+  returns:
+    CompletenessResult
+
+function NORMALIZE_SIGNALS(signals):
+  required actions:
+    - Signalwerte auf 0 bis 100 abbilden
+    - Confidence setzen
+    - max_model_effect setzen
+    - Werte clampen
+  returns:
+    list of EventSignal
+
+function BUILD_TEAM_STATES(prior_state, entities):
+  if prior_state.exists:
+    - TeamState aus prior_state laden
+  else:
+    - Initialwerte aus Quellen ableiten
+    - externe Ratings maximal schwach verwenden
+  returns:
+    list of TeamState
+
+function APPLY_EVENT_UPDATES(team_states, normalized_signals):
+  for each signal:
+    - prüfen, ob event_after_prior_state == true
+    - lambda bestimmen
+    - max_model_effect anwenden
+    - Indexwirkung vorbereiten
+  if no new model-relevant events:
+    - run_result_type = CURRENT_WITH_NO_NEW_MODEL_EVENTS
+    - keine künstlichen Deltas erzeugen
+  returns:
+    EventUpdateResult
+
+function RECALCULATE_INDICES(team_states, event_update_result):
+  required actions:
+    - index_new anwenden
+    - lambda bounds anwenden
+    - hard caps anwenden
+    - Werte clampen
+  returns:
+    list of TeamState
+
+function CALCULATE_DYNAMIC_STRENGTH(team_states):
+  required actions:
+    - D für jedes Team berechnen
+    - Haupttreiber speichern
+  returns:
+    list of TeamState
+
+function BUILD_MATCHUP_MATRIX(team_states):
+  required actions:
+    - paarweise Matchups berechnen
+    - Kontextnachteile berechnen
+    - Shock-Vorteile berechnen
+  returns:
+    MatchupMatrix
+
+function SIMULATE_PATHS(matchup_matrix, team_states):
+  preferred:
+    - exact path enumeration
+  fallback:
+    - seeded Monte Carlo
+    - seed = 26062026
+    - iterations = 100000
+  returns:
+    PathResult
+
+function NORMALIZE_PROBABILITIES(path_result):
+  required actions:
+    - negative Werte auf 0 setzen
+    - Summe auf 100 normalisieren
+    - Summe prüfen: 99.5 bis 100.5
+  returns:
+    ProbabilityResult
+
+function ATTACH_PROBABILITIES(team_states, probability_result):
+  required actions:
+    - title_probability setzen
+    - final_probability setzen
+    - quarter_final_probability setzen
+    - early_exit_probability setzen
+  returns:
+    list of TeamState
+
+function CALCULATE_CRASH_RISK(team_states, path_result):
+  required actions:
+    - CrashRisk pro Team berechnen
+    - hohe Risiken markieren
+  returns:
+    list of TeamState
+
+function GENERATE_CAUSAL_CHAINS(team_states, signals, probability_result):
+  required actions:
+    - für Modellführer mindestens 3 Kausalketten
+    - für Top 10 mindestens 1 Kausalkette
+    - für jede Änderung über 1 Prozentpunkt eine Kausalkette
+    - für hohe Crash-Risiken eine negative Kausalkette
+  returns:
+    CausalChainSet
+
+function AUDIT_MODEL(context, source_run, source_quality, bias_result, signals, team_states, probability_result, causal_chains):
+  checks:
+    - current_sources_fetched
+    - t0_core_checked
+    - prior_state_used_only_as_prior
+    - post_prior_event_search_completed
+    - all_deltas_have_new_event_chain
+    - no_delta_without_post_prior_source
+    - no_synthetic_delta_created
+    - probability_sum_passed
+    - t7_external_forecasts_blocked
+    - no_t7_sources_loaded_or_used
+    - social_media_sets_no_fact
+    - every_output_has_causal_chain
+    - confidence_not_above_data_quality
+    - bias_flags_visible
+  returns:
+    AuditResult
+
+function SELF_CORRECT(audit):
+  if probability_sum_failed:
+      return correction_target = NORMALIZE_PROBABILITIES
+  if causal_chains_missing:
+      return correction_target = GENERATE_CAUSAL_CHAINS
+  if source_missing:
+      return correction_target = FETCH_CURRENT_SOURCES
+  if bad_source_usage:
+      return correction_target = EXTRACT_EVENT_SIGNALS
+  if bias_missing:
+      return correction_target = AUDIT_BIAS
+  if artifact_missing:
+      return correction_target = EXPORT_ARTIFACTS
+
+function RENDER_OUTPUT(...):
+  sections:
+    0 Modellbeschreibung
+    1 Modellstatus
+    2 Aktueller Quellenlauf
+    3 Neu seit letztem Prior-State
+    4 Aus Prior-State übernommen / unverändert
+    5 Bias- und Unsicherheitsflags
+    6 Wahrscheinlichkeitstabelle
+    7 Index-Tabelle
+    8 Veränderungen
+    9 Kausalketten
+    10 Crash-Risk
+    11 Nächste Beobachtungsvariablen
+    12 Audit
+    13 Exportierte Dateien
+  returns:
+    OutputDocument
+
+function RENDER_NOT_CURRENT(...):
+  sections:
+    0 Modellbeschreibung
+    1 Modellstatus
+    2 Warum keine aktuelle Prognose erlaubt ist
+    3 Fehlende oder blockierende Quellenklassen
+    4 Nächster erforderlicher Quellenlauf
+    5 Audit
+    6 Exportierte Dateien
+  forbidden:
+    - aktuelle Titelwahrscheinlichkeiten
+    - aktuelles Ranking
+    - aktuelle Verletzungswirkung
+  returns:
+    OutputDocument
+
+function BUILD_CHANGE_SUMMARY(prior_state, team_states, signals):
+  required actions:
+    - nur echte Änderungen nennen
+    - keine künstlichen Deltas
+    - WhatsApp-kurz formulieren
+  returns:
+    ChangesText
+
+function EXPORT_ARTIFACTS(...):
+  create:
+    - HTML file in staging
+    - Prior-State TXT in staging
+    - Changes TXT in staging
+  staging:
+    - create a unique RUNID, for example YYYYMMDDTHHMMSS
+    - write the four raw artifacts first to website/wm26/staging/YYYY-MM-DD_RUNID
+    - do not write directly to website/wm26/runs before finalization
+    - do not create prepared files during EXPORT_ARTIFACTS
+    - do not update runs_de.json or runs_en.json during EXPORT_ARTIFACTS
+  html must:
+    - begin with <!DOCTYPE html>
+    - contain html, head, meta charset UTF-8, title, style, body
+    - contain the standard DYNAMO26 CSS below inside one <style> block in the head of each run HTML file; prepared HTML may remove this wrapper/style later
+    - contain h1, h2, p, strong, table, thead, tbody, tr, th, td, ul, li
+    - end with </html>
+  standard_css:
+    - CSS is desired for the complete run HTML files, but missing CSS alone is not a KO criterion for CURRENT status.
+    - Use this default CSS unless a run-specific layout need requires a small compatible extension:
+      :root {
+        color-scheme: light;
+        --d26-bg: #f5f7fb;
+        --d26-surface: #ffffff;
+        --d26-text: #172033;
+        --d26-muted: #5b6475;
+        --d26-border: #d9e0ec;
+        --d26-accent: #244f9e;
+        --d26-accent-soft: #eaf1ff;
+        --d26-good: #0b7a4b;
+        --d26-warn: #9a5b00;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--d26-bg);
+        color: var(--d26-text);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.55;
+      }
+      main {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 48px;
+      }
+      h1, h2, h3 { line-height: 1.2; color: var(--d26-text); }
+      h1 { margin: 0 0 8px; font-size: clamp(1.8rem, 3vw, 2.6rem); }
+      h2 { margin: 32px 0 12px; font-size: 1.35rem; border-bottom: 1px solid var(--d26-border); padding-bottom: 6px; }
+      p { margin: 0 0 12px; }
+      a { color: var(--d26-accent); }
+      section {
+        margin: 18px 0;
+        padding: 20px;
+        background: var(--d26-surface);
+        border: 1px solid var(--d26-border);
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0 18px;
+        background: var(--d26-surface);
+        font-size: 0.95rem;
+      }
+      th, td {
+        padding: 9px 10px;
+        border: 1px solid var(--d26-border);
+        text-align: left;
+        vertical-align: top;
+      }
+      th { background: var(--d26-accent-soft); font-weight: 700; }
+      tbody tr:nth-child(even) { background: #fafcff; }
+      ul { padding-left: 1.2rem; }
+      li { margin: 4px 0; }
+      strong { color: var(--d26-text); }
+      .audit {
+        padding: 12px 14px;
+        border-left: 4px solid var(--d26-accent);
+        background: var(--d26-accent-soft);
+        border-radius: 10px;
+      }
+      .footer {
+        margin-top: 28px;
+        color: var(--d26-muted);
+        font-size: 0.92rem;
+      }
+      @media (max-width: 760px) {
+        main { width: min(100% - 20px, 1120px); padding-top: 20px; }
+        section { padding: 14px; border-radius: 12px; }
+        table { display: block; overflow-x: auto; white-space: nowrap; }
+        th, td { padding: 8px; }
+      }
+  prior_state must:
+    - begin with DYNAMO-26 PRIOR_STATE_FILE
+    - contain processing instructions for next run
+    - contain run metadata
+    - contain source quality state
+    - contain bias flags
+    - contain non-blocking gaps
+    - contain title probability prior table if status CURRENT or DEGRADED
+    - contain index prior table if status CURRENT or DEGRADED
+    - contain crash risk prior table
+    - contain causal chains
+    - contain audit summary
+    - contain no HTML tags
+  changes txt must:
+    - be plain text
+    - be short enough for WhatsApp
+  returns:
+    ArtifactResult
+
+function FINALIZE_RUN(context, artifacts, artifact_audit, model_audit = none):
+  success criteria:
+    - source_run.completed == true
+    - context.output_status is CURRENT or DEGRADED
+    - model_audit.passed == true when model_audit exists
+    - artifact_audit.passed == true
+  if success criteria all true:
+    - copy staged artifacts to website/wm26/runs with canonical filenames
+    - only then create prepared HTML and update runs_de.json and runs_en.json
+    - use: python scripts/dynamo26_finalize_run.py --date YYYY-MM-DD --run-id RUNID --status success
+    - after successful finalization, generate XPost files in website/wm26/xposts
+    - execute XPostPrior.txt as a prompt using only:
+      - website/wm26/runs/dynamo26_YYYY-MM-DD_en.html
+      - website/wm26/runs/dynamo26_prior_state_YYYY-MM-DD_pipeline_v1_0.txt
+    - execute XPostChangeMultiLang.txt as a prompt using only:
+      - website/wm26/runs/dynamo26_YYYY-MM-DD_en.html
+      - website/wm26/runs/dynamo26_changes_YYYY-MM-DD.txt
+    - do not use https://dynamo26.pentumlab.com/ as an input source for XPosts because the live site may not yet be updated
+    - after all XPost TXT files exist, update the mobile XPost JSON with:
+      python scripts/dynamo26_update_xposts_json.py --date YYYY-MM-DD
+    - after successful finalization, successful XPost generation, XPost JSON update and passed XPost audit, upload the current run with:
+      powershell -ExecutionPolicy Bypass -File scripts/upload_dynamo26_run.ps1 -Date YYYY-MM-DD
+    - before upload, all XPost TXT files and website/wm26/xposts/xposts.json must validate as real UTF-8 with no Unicode replacement characters and no literal '?' replacement characters; if validation fails, abort upload, regenerate XPosts/JSON correctly, and re-audit
+    - every XPost language version must use native UTF-8 characters for the target language; German uses umlauts/ß, French and Spanish use accents/special characters, and Arabic/Chinese/Japanese use their native scripts; ASCII transliterations such as ae/ue/oe or missing accents must be corrected before upload
+    - upload belongs only to the success path; do not upload failed runs, runs with failed audits, or runs without completed XPost JSON
+    - if upload fails, report upload_status=FAILED and the error reason, but do not mutate model artifacts and do not retroactively run the failed finalizer on already successful artifacts
+  else:
+    - do not create prepared HTML
+    - do not update runs_de.json or runs_en.json
+    - do not create XPost files
+    - do not update website/wm26/xposts/xposts.json
+    - move all staged artifacts to website/wm26/failed
+    - include failed, RUNID and a short reason in every failed filename
+    - use: python scripts/dynamo26_finalize_run.py --date YYYY-MM-DD --run-id RUNID --status failed --reason SHORT_REASON
+  returns:
+    FinalizationResult
+
+function AUDIT_ARTIFACTS(artifacts):
+  checks:
+    - html_file_created
+    - prior_state_file_created
+    - changes_file_created
+    - html_validation_passed
+    - prior_state_validation_passed
+    - changes_validation_passed
+    - download_links_available
+  returns:
+    ArtifactAuditResult
+
+function DELIVER(context, output, artifacts, artifact_audit):
+  if artifact_audit.passed == false:
+    return "FINAL_DELIVERY_BLOCKED"
+  else:
+    return final answer with:
+      - audited output
+      - HTML download link
+      - Prior-State download link
+      - Changes TXT download link
+      - instruction to use Prior-State TXT for next run
+
+============================================================
+6. HARTE GATES
+============================================================
+
+GATE_CURRENT_ALLOWED:
+  pass if:
+    source_run.completed == true
+    source_quality.total_score >= 75
+    unresolved_blocking_conflicts empty
+    critical_missing_data empty
+    t0_core_checked == true
+
+GATE_DEGRADED_ALLOWED:
+  pass if:
+    source_run.completed == true
+    source_quality.total_score >= 60
+    unresolved_blocking_conflicts empty
+    critical_missing_data empty
+
+GATE_NOT_CURRENT_REQUIRED:
+  true if:
+    source_run.completed == false
+    or source_quality.total_score < 60
+    or unresolved_blocking_conflicts not empty
+    or critical_missing_data not empty
+    or t0_core_checked == false
+
+GATE_PROBABILITIES_ALLOWED:
+  pass if:
+    output_status in ["CURRENT", "DEGRADED"]
+    probability_result.normalization_passed == true
+    probability_sum between 99.5 and 100.5
+    audit.passed == true
+
+GATE_FINAL_DELIVERY_ALLOWED:
+  pass if:
+    audit.passed == true
+    artifact_audit.passed == true
+    html download link exists
+    prior-state download link exists
+    changes txt download link exists
+
+============================================================
+7. OUTPUT-STATUS
+============================================================
+
+CURRENT:
+  Aktuelle Quellen vorhanden.
+  Quellenqualität mindestens 75.
+  Keine blockierenden Datenlücken.
+  Nicht blockierende Unsicherheiten sichtbar.
+
+DEGRADED:
+  Aktuelle Quellen vorhanden.
+  Quellenqualität mindestens 60.
+  Keine blockierenden Datenlücken.
+  Konfidenz reduziert.
+
+NOT_CURRENT:
+  Aktueller Quellenlauf fehlt.
+  Oder Quellenqualität unter 60.
+  Oder T0-Kern fehlt.
+  Oder blockierender Konflikt offen.
+  Oder kritische Daten fehlen.
+
+CURRENT_WITH_NO_NEW_MODEL_EVENTS:
+  Aktuelle Quellen wurden geprüft.
+  Keine belastbaren neuen modellrelevanten Events seit dem Prior-State.
+  Zustand bleibt unverändert.
+  Keine künstlichen Deltas.
+
+============================================================
+8. EXECUTOR-PROMPT
+============================================================
+
+Führe DYNAMO-26 PIPELINE SPEC v1.0 aus.
+
+Behandle diese Spezifikation als ausführbaren Pseudo-Code.
+Arbeite Schritt für Schritt.
+Jede Funktion muss ein vollständiges Rückgabeobjekt erzeugen.
+Kein Schritt darf übersprungen werden.
+Keine Wahrscheinlichkeit ohne aktuellen Quellenlauf.
+Keine finale Ausgabe ohne Audit.
+Keine finale Ausgabe ohne HTML-Datei.
+Keine finale Ausgabe ohne Prior-State-TXT.
+Keine finale Ausgabe ohne Änderungs-TXT.
+
+Wenn aktuelle Quellen technisch nicht abrufbar sind:
+Setze output_status = NOT_CURRENT.
+Gib keine aktuelle Wahrscheinlichkeit aus.
+Exportiere trotzdem HTML, Prior-State-TXT und Änderungs-TXT.
+
+Wenn aktuelle Quellen abrufbar sind:
+Versuche CURRENT.
+Nutze DEGRADED nur bei reduzierter Datenqualität.
+Nutze NOT_CURRENT nur bei echten blockierenden Gründen.
+
+Prior-State:
+Nur als gespeicherter Vorzustand verwenden.
+Niemals als aktuelle Quelle verwenden.
+Neue Änderungen nur anwenden, wenn eine vollständige New-Event-Kette existiert.
+
+Finale Antwort:
+Gib die auditierte Ausgabe aus.
+Gib alle drei Downloadlinks aus.
+Sage klar, dass im nächsten Lauf die Prior-State-TXT verwendet wird.
