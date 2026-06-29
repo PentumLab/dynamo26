@@ -15,6 +15,16 @@ Dynamo26 determines each team’s title probability by independently combining t
 
 After each completed run, use the newly generated prior-state TXT file for the next run. Do not use the HTML output as prior-state input.
 
+## Independence & Disclaimer
+
+DYNAMO26 is an independent analytical model.
+
+It is not affiliated with or endorsed by FIFA, any football association, team, broadcaster, bookmaker or official data provider.
+
+No betting odds, bookmaker forecasts or external probability rankings are used as model inputs.
+
+The model outputs are analytical estimates and should not be interpreted as guaranteed predictions or betting advice.
+
 ## License
 
 Copyright 2026 PentumLab GmbH.
