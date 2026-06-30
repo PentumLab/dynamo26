@@ -56,6 +56,7 @@ Harte Regeln:
 - Fehlende Premiumdaten/xG/Pressing/Set-Piece-Daten nicht automatisch als NOT_CURRENT behandeln.
 - Social Media ohne Bestätigung darf keinen Fakt setzen.
 - T7 ist vollständig verboten: keine externen Prognosen, Projektionen, Buchmacherquoten, Elo-/Ranking-Prognosen oder Medien-Wahrscheinlichkeiten laden, suchen, öffnen, zitieren oder verwenden. Auch keine Kalibrierung damit.
+- Gruppenabschluss-Regel: Jeder Lauf prüft zwei Bedingungen: (1) Ist die Gruppenphase laut offiziellem Turnierkern vorbei? (2) Enthält der Prior-State bereits group_stage_final_qualification_gate_passed=true mit vollständigen Listen qualified_teams, best_third_placed_teams und eliminated_teams? Nur wenn (1)=true und (2)=false/fehlt, muss der Lauf das Gruppenabschluss-/K.o.-Qualifikations-Gate vollständig ausführen. Danach muss der neue Prior-State group_stage_final_qualification_gate_passed=true sowie die finalen Listen speichern. Vor bestandenem Gate dürfen Drittplatzierte nicht endgültig als qualifiziert/ausgeschieden behandelt werden.
 - Jede OUTPUT-Aussage braucht eine Kausalkette.
 - Erzeuge Tageslauf-Artefakte zuerst in website/wm26/staging/YYYY-MM-DD_RUNID.
 - Nur wenn Quellen-, Modell- und Artefaktprüfungen bestanden sind, darf veröffentlicht werden:

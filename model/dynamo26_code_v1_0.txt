@@ -300,6 +300,16 @@ function RUN_PIPELINE(input):
 
   completeness = CHECK_INPUT_COMPLETENESS(source_run, source_quality, signals)
 
+  group_stage_gate = CHECK_GROUP_STAGE_FINAL_QUALIFICATION(source_run, classified_sources, prior_state)
+
+  if group_stage_gate.required == true and group_stage_gate.passed == false:
+      context.output_status = "NOT_CURRENT"
+      output = RENDER_NOT_CURRENT(context, group_stage_gate)
+      artifacts = EXPORT_ARTIFACTS(context, output, prior_state, empty_changes)
+      artifact_audit = AUDIT_ARTIFACTS(artifacts)
+      finalization = FINALIZE_RUN(context, artifacts, artifact_audit)
+      return DELIVER(context, output, artifacts, artifact_audit, finalization)
+
   context.output_status = DETERMINE_OUTPUT_STATUS(source_run, source_quality, completeness)
 
   if context.output_status == "NOT_CURRENT":
@@ -497,8 +507,68 @@ function RESOLVE_ENTITIES(classified_sources, prior_state):
     - Spielorte normalisieren
     - Teamstatus prüfen
     - nicht qualifizierte Teams aus aktivem Modelluniversum entfernen
+    - Wenn die Gruppenphase abgeschlossen ist, darf ein Team nur dann im aktiven K.o.-Modelluniversum bleiben, wenn CHECK_GROUP_STAGE_FINAL_QUALIFICATION es als qualifiziert bestätigt hat.
+    - Wenn die Gruppenphase noch nicht abgeschlossen ist, dürfen Drittplatzierte nur als provisional/contender markiert werden; sie dürfen nicht endgültig als qualifiziert oder ausgeschieden behandelt werden.
   returns:
     EntityMap
+
+function CHECK_GROUP_STAGE_FINAL_QUALIFICATION(source_run, classified_sources, prior_state):
+  trigger:
+    - prüfe in jedem Lauf zwei Bedingungen:
+      1. Ist das letzte Gruppenspiel laut aktuellem offiziellem Turnierkern beendet?
+      2. Enthält der Prior-State bereits group_stage_final_qualification_gate_passed=true plus vollständige Listen qualified_teams, best_third_placed_teams und eliminated_teams?
+    - nutze für Bedingung 1 aktuelle offizielle Spiel-/Fixture-/Standings-Quellen und mindestens eine allgemeine Chrome-Websuche, damit unerwartete Änderungen erkannt werden
+  if last_group_match_finished == false:
+    - required = false
+    - group_stage_final_qualification_gate_passed bleibt false oder absent
+    - markiere alle noch offenen Drittplatzierten-/Qualifikationsfragen als provisional
+    - keine endgültige Eliminierung/Qualifikation allein aus Drittplatz möglich
+    - returns QualificationGateResult
+  if last_group_match_finished == true and prior_state.group_stage_final_qualification_gate_passed == true:
+    required actions:
+      - vollständige Listen aus dem Prior-State übernehmen:
+        qualified_teams
+        best_third_placed_teams
+        eliminated_teams
+      - prüfen, ob aktuelle offizielle Quellen eine nachträgliche Korrektur, Disziplinarentscheidung oder Bracket-Änderung melden
+      - wenn keine offizielle Korrektur vorliegt: passed = true, reused_from_prior_state = true, no_full_recalculation_required = true
+      - wenn eine offizielle Korrektur vorliegt: Gate erneut öffnen und vollständige Prüfung ausführen
+    returns QualificationGateResult
+  if last_group_match_finished == true:
+    required actions:
+      - offizielle Endtabellen aller Gruppen abrufen und dokumentieren
+      - direkte Qualifikanten je Gruppe bestimmen
+      - alle Drittplatzierten erfassen
+      - beste Drittplatzierte nach offiziellen Wettbewerbs- und Tie-Break-Regeln bestimmen
+      - offizielle K.o.-Runden-/Bracket- oder Qualifikantenliste prüfen, sobald verfügbar
+      - Konflikte zwischen Tabellen, Bracket und Newsquellen als blocking_conflict behandeln
+      - vollständige Liste erstellen: qualified_teams, eliminated_teams, best_third_placed_teams
+      - jede Änderung des Teamstatus mit Quelle, Datum, Regelgrund und Kausalkette dokumentieren
+      - im neuen Prior-State speichern:
+        group_stage_final_qualification_gate_passed=true
+        group_stage_final_qualification_gate_checked_at=RUN_TIMESTAMP
+        group_stage_final_qualification_sources=[...]
+        qualified_teams=[...]
+        best_third_placed_teams=[...]
+        eliminated_teams=[...]
+        qualification_gate_reopen_only_on_official_correction=true
+    required evidence:
+      - mindestens eine aktuelle offizielle T0/FIFA-Quelle für Tabellen/Spielstatus/Bracket
+      - falls offizielle Bracket-Liste noch fehlt: offizielle Gruppentabellen plus dokumentierte Tie-Break-Regelberechnung
+      - keine Such-Snippets als alleinige Qualifikationsquelle
+    pass criteria:
+      - all_group_matches_complete == true
+      - knockout_qualified_teams_complete == true
+      - best_third_placed_verified == true
+      - eliminated_teams_verified == true
+      - no_blocking_qualification_conflict == true
+      - prior_state_will_persist_qualification_gate == true
+    if any pass criterion false:
+      - passed = false
+      - output_status must be NOT_CURRENT or DEGRADED_NOT_PUBLISHABLE according to severity
+      - no prepared/json/xposts/upload success path
+    returns:
+      QualificationGateResult
 
 function EXTRACT_EVENT_SIGNALS(classified_sources, entities, prior_state):
   required actions:
@@ -516,6 +586,9 @@ function CHECK_INPUT_COMPLETENESS(source_run, source_quality, signals):
     - aktuelle Team-/Availability-Daten mindestens mittel
     - aktuelle Kontextdaten mindestens mittel
     - keine blockierenden Konflikte
+    - Wenn das letzte Gruppenspiel beendet ist: group_stage_final_qualification_gate_completed
+    - Wenn das letzte Gruppenspiel beendet ist: best_third_placed_verified
+    - Wenn das letzte Gruppenspiel beendet ist: knockout_qualified_teams_complete
   returns:
     CompletenessResult
 
@@ -632,6 +705,9 @@ function AUDIT_MODEL(context, source_run, source_quality, bias_result, signals, 
     - every_output_has_causal_chain
     - confidence_not_above_data_quality
     - bias_flags_visible
+    - if group stage final is complete: group_stage_final_qualification_gate_completed
+    - if group stage final is complete: best_third_placed_verified
+    - if group stage final is complete: knockout_qualified_teams_complete
   returns:
     AuditResult
 
