@@ -60,8 +60,9 @@ Jede finale OUTPUT-Aussage braucht eine Kausalkette:
 Ursache -> Mechanismus -> Effekt -> Bedingung
 
 RULE_08:
-Am Ende müssen drei Dateien erzeugt werden:
-- HTML-Ausgabe
+Am Ende müssen vier Hauptlauf-Artefakte erzeugt werden:
+- deutsche HTML-Ausgabe
+- englische HTML-Ausgabe
 - Prior-State-TXT für den nächsten Lauf
 - kurze Änderungs-TXT
 
@@ -210,7 +211,8 @@ fields:
 
 OBJECT ArtifactResult
 fields:
-  html_file_created
+  german_html_file_created
+  english_html_file_created
   prior_state_file_created
   changes_file_created
   html_validation_passed
@@ -566,7 +568,7 @@ function CHECK_GROUP_STAGE_FINAL_QUALIFICATION(source_run, classified_sources, p
     if any pass criterion false:
       - passed = false
       - output_status must be NOT_CURRENT or DEGRADED_NOT_PUBLISHABLE according to severity
-      - no prepared/json/xposts/upload success path
+      - no downstream publishing success path
     returns:
       QualificationGateResult
 
@@ -673,6 +675,31 @@ function ATTACH_PROBABILITIES(team_states, probability_result):
   returns:
     list of TeamState
 
+function BUILD_MAIN_PROBABILITY_TABLE(team_states, prior_state, current_event_chains):
+  required actions:
+    - Sortiere aktive Einzelteams nach title_probability absteigend.
+    - Teams mit title_probability 0.0 dürfen nur dann in der Haupt-Wahrscheinlichkeitstabelle erscheinen, wenn sie im aktuellen Lauf gerade auf 0.0 gefallen bzw. gerade ausgeschieden sind.
+    - Teams, die bereits in einem früheren Lauf auf 0.0 gefallen waren, werden aus der Haupttabelle entfernt.
+    - Entfernte 0.0-Teams bleiben im Prior-State nachvollziehbar erhalten: eliminated_teams, knockout_eliminated_teams_after_prior_cutoff oder ein geeigneter Archiv-/Statusabschnitt.
+    - Wenn Restfeld eine positive Titelwahrscheinlichkeit hat, muss die Haupttabelle genau 25 Zeilen enthalten.
+    - Freie Tabellenplätze müssen mit noch aktiven Teams gefüllt werden, die fachlich im Restfeld-Aggregat enthalten sind.
+    - Ausgeschiedene Teams aus dem Restfeld dürfen nicht als Füllteams erscheinen; sie bleiben nur in Status-/Archivabschnitten nachvollziehbar.
+    - Restfeld-Füllteams nach internem Restfeld-Wert absteigend auswählen; wenn diese Werte im Prior-State nicht bestimmt sind, muss der Lauf sie aus Restfeld-Signalen, K.o.-Pfad, Qualifikationsstatus, Gegnerpfad, Teamstärke-/Indexhinweisen und aktuellen Quellen nachvollziehbar ermitteln.
+    - Restfeld-Füllteams sind keine reinen Anzeigezeilen: Wenn sie in der Haupttabelle erscheinen, müssen title_probability_percent, final_probability_percent, quarter_final_probability_percent, early_exit_probability_percent und crash_risk_score vollständig modelliert werden.
+    - Dasselbe gilt für eine verbleibende Restfeld-Restzeile als Aggregat für Title, Final und QF. early_exit_probability_percent und crash_risk_score bleiben bei der Restfeld-Rest-Aggregatzeile leer, solange sie nicht ausdrücklich als gewichtete Aggregatindikatoren mit eigener Kennzeichnung definiert werden.
+    - Für Restfeld-Füllteams und Restfeld-Restzeile dürfen keine Werte erfunden oder doppelt gezählt werden: Summe der Füllteam-Titelwerte plus Restfeld-Restzeile muss exakt der bisherigen Restfeld-Gesamtwahrscheinlichkeit entsprechen.
+    - Final-/Viertelfinal-/Early-Exit- und Crash-Risk-Werte müssen aus derselben Pfadsimulation bzw. derselben Restfeld-Komponentenrechnung stammen; wenn das nicht möglich ist, gilt der Lauf als nicht erfolgreich und darf nicht finalisiert werden.
+    - Wenn Restfeld-Komponenten neu aus dem Aggregat gehoben werden, muss geprüft werden, ob die Pfadsimulation dadurch andere Teams beeinflusst; nötige Korrekturen an anderen Teams müssen mit Kausalkette dokumentiert werden.
+    - Die Restfeld-Restzeile steht immer am Ende der Haupttabelle, solange ein positiver Restfeld-Rest verbleibt.
+    - Wenn kein positives Restfeld mehr existiert, wird keine Restfeld-Zeile angezeigt und die Haupttabelle darf weniger als 25 Zeilen haben.
+    - Ränge nach dieser Anzeige-/Lebenszyklusregel lückenlos neu berechnen.
+    - Probability-Summe bleibt über modellierte Einzelteams plus Restfeld-Füllteams plus Restfeld-Restzeile 100.0.
+    - Summenprüfungen: Summe title_probability_percent = 100.0; Summe final_probability_percent = 200.0; Summe quarter_final_probability_percent = 800.0. Diese Regeln gelten über die gesamte Haupttabelle inklusive Restfeld-Komponenten und Restfeld-Rest-Aggregat.
+    - crash_risk_score wird nicht aufsummiert; für Einzelteams ist er individuell, für eine Restfeld-Rest-Aggregatzeile bleibt er leer oder wird ausdrücklich als gewichteter Aggregatindikator markiert.
+    - early_exit_probability_percent wird für Einzelteams modelliert; für eine Restfeld-Rest-Aggregatzeile bleibt er leer oder wird ausdrücklich als gewichteter Aggregatindikator markiert.
+  returns:
+    MainProbabilityTable
+
 function CALCULATE_CRASH_RISK(team_states, path_result):
   required actions:
     - CrashRisk pro Team berechnen
@@ -741,6 +768,9 @@ function RENDER_OUTPUT(...):
     11 Nächste Beobachtungsvariablen
     12 Audit
     13 Exportierte Dateien
+  required actions:
+    - Verwende für Abschnitt 6 und TITLE_PROBABILITY_PRIOR_TABLE die Ausgabe von BUILD_MAIN_PROBABILITY_TABLE.
+    - Die Reihenfolge und Ränge in deutscher HTML, englischer HTML und Prior-State-Tabelle müssen identisch sein.
   returns:
     OutputDocument
 
@@ -770,19 +800,18 @@ function BUILD_CHANGE_SUMMARY(prior_state, team_states, signals):
 
 function EXPORT_ARTIFACTS(...):
   create:
-    - HTML file in staging
-    - Prior-State TXT in staging
-    - Changes TXT in staging
-  staging:
-    - create a unique RUNID, for example YYYYMMDDTHHMMSS
-    - write the four raw artifacts first to website/wm26/staging/YYYY-MM-DD_RUNID
-    - do not write directly to website/wm26/runs before finalization
-    - do not create prepared files during EXPORT_ARTIFACTS
-    - do not update runs_de.json or runs_en.json during EXPORT_ARTIFACTS
+    - German HTML file named dynamo26_YYYY-MM-DD_de.html
+    - English HTML file named dynamo26_YYYY-MM-DD_en.html
+    - Prior-State TXT named dynamo26_prior_state_YYYY-MM-DD_pipeline_v1_0.txt
+    - Changes TXT named dynamo26_changes_YYYY-MM-DD.txt
+  output target:
+    - write the four raw artifacts to the artifact output directory supplied by the daily-run orchestrator
+    - do not hard-code local website paths
+    - do not create downstream publishing artifacts during EXPORT_ARTIFACTS
   html must:
     - begin with <!DOCTYPE html>
     - contain html, head, meta charset UTF-8, title, style, body
-    - contain the standard DYNAMO26 CSS below inside one <style> block in the head of each run HTML file; prepared HTML may remove this wrapper/style later
+    - contain the standard DYNAMO26 CSS below inside one <style> block in the head of each run HTML file
     - contain h1, h2, p, strong, table, thead, tbody, tr, th, td, ul, li
     - end with </html>
   standard_css:
@@ -877,6 +906,13 @@ function EXPORT_ARTIFACTS(...):
   changes txt must:
     - be plain text
     - be short enough for WhatsApp
+    - be single-language English and use this structured format:
+      line 1: DYNAMO26 changes - YYYY-MM-DD
+      line 2: Status: CURRENT|DEGRADED. New verified matches after prior cutoff: N.
+      following lines: Team: +x.x pp to y.y%. Short English causal reason.
+      final line: Other small changes are normalization/path effects from the verified results. T6 warning scan set no fact. T7 was not searched, opened or used.
+    - every material model movement must have its own Team line with delta, target probability and causal reason
+    - do not put all changes into line 1 or line 2; those lines are metadata/control
   returns:
     ArtifactResult
 
@@ -887,39 +923,19 @@ function FINALIZE_RUN(context, artifacts, artifact_audit, model_audit = none):
     - model_audit.passed == true when model_audit exists
     - artifact_audit.passed == true
   if success criteria all true:
-    - copy staged artifacts to website/wm26/runs with canonical filenames
-    - only then create prepared HTML and update runs_de.json and runs_en.json
-    - use: python scripts/dynamo26_finalize_run.py --date YYYY-MM-DD --run-id RUNID --status success
-    - after successful finalization, generate XPost files in website/wm26/xposts
-    - execute XPostPrior.txt as a prompt using only:
-      - website/wm26/runs/dynamo26_YYYY-MM-DD_en.html
-      - website/wm26/runs/dynamo26_prior_state_YYYY-MM-DD_pipeline_v1_0.txt
-    - execute XPostChangeMultiLang.txt as a prompt using only:
-      - website/wm26/runs/dynamo26_YYYY-MM-DD_en.html
-      - website/wm26/runs/dynamo26_changes_YYYY-MM-DD.txt
-    - do not use https://dynamo26.pentumlab.com/ as an input source for XPosts because the live site may not yet be updated
-    - after all XPost TXT files exist, update the mobile XPost JSON with:
-      python scripts/dynamo26_update_xposts_json.py --date YYYY-MM-DD
-    - after successful finalization, successful XPost generation, XPost JSON update and passed XPost audit, upload the current run with:
-      powershell -ExecutionPolicy Bypass -File scripts/upload_dynamo26_run.ps1 -Date YYYY-MM-DD
-    - before upload, all XPost TXT files and website/wm26/xposts/xposts.json must validate as real UTF-8 with no Unicode replacement characters and no literal '?' replacement characters; if validation fails, abort upload, regenerate XPosts/JSON correctly, and re-audit
-    - every XPost language version must use native UTF-8 characters for the target language; German uses umlauts/ß, French and Spanish use accents/special characters, and Arabic/Chinese/Japanese use their native scripts; ASCII transliterations such as ae/ue/oe or missing accents must be corrected before upload
-    - upload belongs only to the success path; do not upload failed runs, runs with failed audits, or runs without completed XPost JSON
-    - if upload fails, report upload_status=FAILED and the error reason, but do not mutate model artifacts and do not retroactively run the failed finalizer on already successful artifacts
+    - mark the four main artifacts as successful and ready for the daily-run orchestrator
+    - do not create downstream publishing artifacts inside the model run
+    - downstream publishing and deployment are handled only by the daily-run orchestrator after this success result
   else:
-    - do not create prepared HTML
-    - do not update runs_de.json or runs_en.json
-    - do not create XPost files
-    - do not update website/wm26/xposts/xposts.json
-    - move all staged artifacts to website/wm26/failed
-    - include failed, RUNID and a short reason in every failed filename
-    - use: python scripts/dynamo26_finalize_run.py --date YYYY-MM-DD --run-id RUNID --status failed --reason SHORT_REASON
+    - mark the four main artifacts as failed and include a short failure reason for the daily-run orchestrator
+    - do not create downstream publishing artifacts inside the model run
   returns:
     FinalizationResult
 
 function AUDIT_ARTIFACTS(artifacts):
   checks:
-    - html_file_created
+    - german_html_file_created
+    - english_html_file_created
     - prior_state_file_created
     - changes_file_created
     - html_validation_passed
@@ -935,7 +951,8 @@ function DELIVER(context, output, artifacts, artifact_audit):
   else:
     return final answer with:
       - audited output
-      - HTML download link
+      - German HTML download link
+      - English HTML download link
       - Prior-State download link
       - Changes TXT download link
       - instruction to use Prior-State TXT for next run
@@ -1023,14 +1040,14 @@ Jede Funktion muss ein vollständiges Rückgabeobjekt erzeugen.
 Kein Schritt darf übersprungen werden.
 Keine Wahrscheinlichkeit ohne aktuellen Quellenlauf.
 Keine finale Ausgabe ohne Audit.
-Keine finale Ausgabe ohne HTML-Datei.
+Keine finale Ausgabe ohne deutsche und englische HTML-Datei.
 Keine finale Ausgabe ohne Prior-State-TXT.
 Keine finale Ausgabe ohne Änderungs-TXT.
 
 Wenn aktuelle Quellen technisch nicht abrufbar sind:
 Setze output_status = NOT_CURRENT.
 Gib keine aktuelle Wahrscheinlichkeit aus.
-Exportiere trotzdem HTML, Prior-State-TXT und Änderungs-TXT.
+Exportiere trotzdem deutsche HTML, englische HTML, Prior-State-TXT und Änderungs-TXT.
 
 Wenn aktuelle Quellen abrufbar sind:
 Versuche CURRENT.
@@ -1044,5 +1061,5 @@ Neue Änderungen nur anwenden, wenn eine vollständige New-Event-Kette existiert
 
 Finale Antwort:
 Gib die auditierte Ausgabe aus.
-Gib alle drei Downloadlinks aus.
+Gib alle vier Downloadlinks aus.
 Sage klar, dass im nächsten Lauf die Prior-State-TXT verwendet wird.
