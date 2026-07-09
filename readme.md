@@ -6,6 +6,8 @@ A Large Language Model (LLM) then evaluates verified match events, tactical cont
 
 Dynamo26 determines each team’s title probability by independently combining these information signals — without using external forecasts, betting odds or media rankings.
 
+[Description Video](https://dynamo26.pentumlab.com/video.html)
+
 ## Usage
 
 1. Upload the model file from `model/`.
