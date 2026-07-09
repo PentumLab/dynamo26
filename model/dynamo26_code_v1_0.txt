@@ -148,11 +148,56 @@ fields:
   created_at_run_date
   model_version
   teams
+  knockout_bracket_state
   title_probabilities
   index_values
   crash_risks
   uncertainty_flags
   prior_causal_chains
+  pre_match_dossiers
+
+OBJECT KnockoutBracketState
+fields:
+  bracket_locked
+  current_stage
+  checked_at
+  sources
+  rounds
+  team_bracket_positions
+  display_intermediate_probability
+  reopen_only_on_official_correction
+
+rounds item structure:
+  match_id
+  round
+  slot
+  team_a
+  team_b
+  team_a_source
+  team_b_source
+  status
+  score
+  winner
+  winner_to
+  loser_eliminated
+  half
+  quarter
+  sources
+
+team_bracket_positions item structure:
+  team
+  status
+  half
+  quarter
+  slot
+  current_match_id
+  possible_next_match_id
+
+serialization requirement:
+  - Prior-State must contain a dedicated KNOCKOUT_BRACKET_STATE section
+  - use machine-readable YAML-like key/value and list structure
+  - do not store the bracket only as prose
+  - match_id, winner_to and team_bracket_positions must be stable across runs
 
 OBJECT EventSignal
 fields:
@@ -171,6 +216,58 @@ fields:
   max_model_effect
   causal_event_chain
 
+OBJECT PreMatchDossier
+fields:
+  match_id
+  competition_stage
+  team_a
+  team_b
+  kickoff_at
+  venue
+  venue_status
+  referee
+  referee_appointment_status
+  referee_style_relevance
+  team_a_availability
+  team_b_availability
+  team_a_expected_lineup
+  team_b_expected_lineup
+  team_a_environment
+  team_b_environment
+  team_a_playing_style
+  team_b_playing_style
+  tactical_interactions
+  rest_and_travel_context
+  weather_at_kickoff
+  group_scenario_relevance
+  evidence_by_topic
+  source_ids
+  checked_at
+  freshness
+  confidence
+  information_gaps
+  raw_context_direction
+  damped_context_effect
+  model_effect_allowed
+  model_effect_reason
+  post_prior_context_event_chain
+
+OBJECT PreMatchAuditResult
+fields:
+  completed
+  pre_match_source_run_completed
+  pre_match_source_quality_sufficient
+  all_upcoming_matches_covered
+  topic_coverage_by_match
+  unknown_items_explicit
+  sources_attached_to_each_preview
+  no_unconfirmed_fact_used
+  no_double_counting
+  contextual_effects_minimal
+  knockout_pair_effects_zero_sum
+  group_effects_scenario_gated
+  failed_checks
+
 OBJECT TeamState
 fields:
   team_id
@@ -186,6 +283,7 @@ fields:
   crash_risk
   title_probability
   final_probability
+  semi_final_probability
   quarter_final_probability
   early_exit_probability
   confidence_level
@@ -197,7 +295,12 @@ OBJECT ProbabilityResult
 fields:
   probabilities_by_team
   probability_sum
+  final_probability_sum
+  semi_final_probability_sum
+  quarter_final_probability_sum
   normalization_passed
+  bracket_constraints_passed
+  display_intermediate_probability
   simulation_method
   seed
   iterations
@@ -300,8 +403,6 @@ function RUN_PIPELINE(input):
 
   signals = EXTRACT_EVENT_SIGNALS(classified_sources, entities, prior_state)
 
-  completeness = CHECK_INPUT_COMPLETENESS(source_run, source_quality, signals)
-
   group_stage_gate = CHECK_GROUP_STAGE_FINAL_QUALIFICATION(source_run, classified_sources, prior_state)
 
   if group_stage_gate.required == true and group_stage_gate.passed == false:
@@ -311,6 +412,38 @@ function RUN_PIPELINE(input):
       artifact_audit = AUDIT_ARTIFACTS(artifacts)
       finalization = FINALIZE_RUN(context, artifacts, artifact_audit)
       return DELIVER(context, output, artifacts, artifact_audit, finalization)
+
+  bracket_state = UPDATE_KNOCKOUT_BRACKET_STATE(source_run, classified_sources, prior_state, group_stage_gate)
+
+  upcoming_matches = BUILD_UPCOMING_MATCH_PLAN(bracket_state, source_run)
+
+  pre_match_source_plan = BUILD_PRE_MATCH_SOURCE_PLAN(upcoming_matches, prior_state)
+
+  pre_match_source_run = FETCH_PRE_MATCH_SOURCES(pre_match_source_plan)
+
+  pre_match_classified_sources = CLASSIFY_SOURCES(pre_match_source_run)
+
+  pre_match_source_quality = AUDIT_SOURCE_QUALITY(pre_match_classified_sources)
+
+  pre_match_dossiers = BUILD_PRE_MATCH_DOSSIERS(
+      upcoming_matches,
+      pre_match_classified_sources,
+      prior_state
+  )
+
+  pre_match_audit = AUDIT_PRE_MATCH_DOSSIERS(
+      upcoming_matches,
+      pre_match_source_run,
+      pre_match_source_quality,
+      pre_match_dossiers
+  )
+
+  completeness = CHECK_INPUT_COMPLETENESS(
+      source_run,
+      source_quality,
+      signals,
+      pre_match_audit
+  )
 
   context.output_status = DETERMINE_OUTPUT_STATUS(source_run, source_quality, completeness)
 
@@ -331,13 +464,13 @@ function RUN_PIPELINE(input):
 
   team_states = CALCULATE_DYNAMIC_STRENGTH(team_states)
 
-  matchup_matrix = BUILD_MATCHUP_MATRIX(team_states)
+  matchup_matrix = BUILD_MATCHUP_MATRIX(team_states, pre_match_dossiers)
 
-  path_result = SIMULATE_PATHS(matchup_matrix, team_states)
+  path_result = SIMULATE_PATHS(matchup_matrix, team_states, bracket_state)
 
-  probability_result = NORMALIZE_PROBABILITIES(path_result)
+  probability_result = NORMALIZE_PROBABILITIES(path_result, bracket_state)
 
-  team_states = ATTACH_PROBABILITIES(team_states, probability_result)
+  team_states = ATTACH_PROBABILITIES(team_states, probability_result, bracket_state)
 
   team_states = CALCULATE_CRASH_RISK(team_states, path_result)
 
@@ -351,7 +484,10 @@ function RUN_PIPELINE(input):
       signals,
       team_states,
       probability_result,
-      causal_chains
+      bracket_state,
+      causal_chains,
+      pre_match_dossiers,
+      pre_match_audit
   )
 
   correction_count = 0
@@ -373,17 +509,19 @@ function RUN_PIPELINE(input):
       team_states,
       probability_result,
       causal_chains,
-      audit
+      audit,
+      pre_match_dossiers,
+      pre_match_audit
   )
 
   changes = BUILD_CHANGE_SUMMARY(prior_state, team_states, signals)
 
-  artifacts = EXPORT_ARTIFACTS(context, output, team_states, probability_result, causal_chains, changes)
+  artifacts = EXPORT_ARTIFACTS(context, output, team_states, probability_result, causal_chains, pre_match_dossiers, changes)
 
   artifact_audit = AUDIT_ARTIFACTS(artifacts)
 
   if artifact_audit.passed == false:
-      artifacts = EXPORT_ARTIFACTS(context, output, team_states, probability_result, causal_chains, changes)
+      artifacts = EXPORT_ARTIFACTS(context, output, team_states, probability_result, causal_chains, pre_match_dossiers, changes)
       artifact_audit = AUDIT_ARTIFACTS(artifacts)
 
   finalization = FINALIZE_RUN(context, artifacts, artifact_audit, audit)
@@ -518,8 +656,8 @@ function CHECK_GROUP_STAGE_FINAL_QUALIFICATION(source_run, classified_sources, p
   trigger:
     - prüfe in jedem Lauf zwei Bedingungen:
       1. Ist das letzte Gruppenspiel laut aktuellem offiziellem Turnierkern beendet?
-      2. Enthält der Prior-State bereits group_stage_final_qualification_gate_passed=true plus vollständige Listen qualified_teams, best_third_placed_teams und eliminated_teams?
-    - nutze für Bedingung 1 aktuelle offizielle Spiel-/Fixture-/Standings-Quellen und mindestens eine allgemeine Chrome-Websuche, damit unerwartete Änderungen erkannt werden
+      2. Enthält der Prior-State bereits group_stage_final_qualification_gate_passed=true plus vollständige Listen qualified_teams, best_third_placed_teams und eliminated_teams sowie einen vollständigen KnockoutBracketState?
+    - nutze für Bedingung 1 aktuelle offizielle Spiel-/Fixture-/Standings-Quellen und mindestens eine allgemeine Websuche, damit unerwartete Änderungen erkannt werden
   if last_group_match_finished == false:
     - required = false
     - group_stage_final_qualification_gate_passed bleibt false oder absent
@@ -528,10 +666,11 @@ function CHECK_GROUP_STAGE_FINAL_QUALIFICATION(source_run, classified_sources, p
     - returns QualificationGateResult
   if last_group_match_finished == true and prior_state.group_stage_final_qualification_gate_passed == true:
     required actions:
-      - vollständige Listen aus dem Prior-State übernehmen:
+      - vollständige Listen und KnockoutBracketState aus dem Prior-State übernehmen:
         qualified_teams
         best_third_placed_teams
         eliminated_teams
+        knockout_bracket_state
       - prüfen, ob aktuelle offizielle Quellen eine nachträgliche Korrektur, Disziplinarentscheidung oder Bracket-Änderung melden
       - wenn keine offizielle Korrektur vorliegt: passed = true, reused_from_prior_state = true, no_full_recalculation_required = true
       - wenn eine offizielle Korrektur vorliegt: Gate erneut öffnen und vollständige Prüfung ausführen
@@ -553,6 +692,7 @@ function CHECK_GROUP_STAGE_FINAL_QUALIFICATION(source_run, classified_sources, p
         qualified_teams=[...]
         best_third_placed_teams=[...]
         eliminated_teams=[...]
+        KNOCKOUT_BRACKET_STATE as serialized KnockoutBracketState with bracket_locked, current_stage, sources, rounds and team_bracket_positions
         qualification_gate_reopen_only_on_official_correction=true
     required evidence:
       - mindestens eine aktuelle offizielle T0/FIFA-Quelle für Tabellen/Spielstatus/Bracket
@@ -561,6 +701,7 @@ function CHECK_GROUP_STAGE_FINAL_QUALIFICATION(source_run, classified_sources, p
     pass criteria:
       - all_group_matches_complete == true
       - knockout_qualified_teams_complete == true
+      - knockout_bracket_state_complete == true
       - best_third_placed_verified == true
       - eliminated_teams_verified == true
       - no_blocking_qualification_conflict == true
@@ -568,9 +709,33 @@ function CHECK_GROUP_STAGE_FINAL_QUALIFICATION(source_run, classified_sources, p
     if any pass criterion false:
       - passed = false
       - output_status must be NOT_CURRENT or DEGRADED_NOT_PUBLISHABLE according to severity
-      - no downstream publishing success path
+      - mark the run as not publishable; downstream publishing must not run
     returns:
       QualificationGateResult
+
+function UPDATE_KNOCKOUT_BRACKET_STATE(source_run, classified_sources, prior_state, group_stage_gate):
+  required actions:
+    - Wenn group_stage_gate nicht bestanden oder Gruppenphase nicht abgeschlossen ist: bracket_locked=false setzen und keine endgültigen K.o.-Pfade erzwingen.
+    - Wenn prior_state.knockout_bracket_state vorhanden und bracket_locked=true ist: diesen Baum als Ausgangspunkt übernehmen.
+    - In jedem Lauf aktuelle offizielle Quellen auf neue Endstände, Forfait-/Disziplinarentscheidungen, Bracket-Korrekturen und Spielverlegungen prüfen.
+    - Neue bestätigte K.o.-Ergebnisse in rounds aktualisieren: status=completed, score, winner, loser_eliminated=true, winner_to-Slot befüllen, Verliererstatus eliminieren.
+    - Noch offene Paarungen eindeutig als team_a/team_b oder winner_match_id-Platzhalter speichern; keine freien Textpfade.
+    - current_stage aus dem frühesten noch offenen Match bestimmen.
+    - display_intermediate_probability bestimmen:
+      * quarter_final_probability, wenn mindestens ein Achtelfinal-/R16-Platz zur QF-Erreichung noch offen ist.
+      * semi_final_probability, wenn der Viertelfinalpfad die nächste relevante Zwischenrunde ist und das Finale noch nicht als einzige offene Partie übrig ist.
+      * none, wenn nur noch das Finale offen ist.
+    - team_bracket_positions für jedes noch lebende Team aktualisieren: half, quarter, slot, current_match_id, possible_next_match_id.
+    - Im Prior-State den vollständigen KnockoutBracketState im Abschnitt KNOCKOUT_BRACKET_STATE speichern, inklusive Quellen und checked_at.
+  pass criteria:
+    - every live team has exactly one bracket position
+    - every live match has two resolvable participants or two explicit winner_match_id placeholders
+    - winner_to links form an acyclic bracket
+    - teams in same quarter cannot both occupy different semi-final slots
+    - teams in same half cannot both occupy opposite final slots
+    - bracket corrections are sourced from official/current sources
+  returns:
+    KnockoutBracketState
 
 function EXTRACT_EVENT_SIGNALS(classified_sources, entities, prior_state):
   required actions:
@@ -582,12 +747,15 @@ function EXTRACT_EVENT_SIGNALS(classified_sources, entities, prior_state):
   returns:
     list of EventSignal
 
-function CHECK_INPUT_COMPLETENESS(source_run, source_quality, signals):
+function CHECK_INPUT_COMPLETENESS(source_run, source_quality, signals, pre_match_audit):
   required for CURRENT or DEGRADED:
     - aktueller offizieller Turnierkern vorhanden
     - aktuelle Team-/Availability-Daten mindestens mittel
     - aktuelle Kontextdaten mindestens mittel
     - keine blockierenden Konflikte
+    - jede feststehende kommende Partie besitzt ein PreMatchDossier
+    - unbekannte, noch nicht angesetzte oder nicht bestätigte Pre-Match-Angaben sind ausdrücklich als solche markiert
+    - fehlende Einzelangaben wie eine noch nicht veröffentlichte Schiedsrichteransetzung sind nicht automatisch blockierend, solange Suche und Datenlücke dokumentiert sind
     - Wenn das letzte Gruppenspiel beendet ist: group_stage_final_qualification_gate_completed
     - Wenn das letzte Gruppenspiel beendet ist: best_third_placed_verified
     - Wenn das letzte Gruppenspiel beendet ist: knockout_qualified_teams_complete
@@ -640,38 +808,136 @@ function CALCULATE_DYNAMIC_STRENGTH(team_states):
   returns:
     list of TeamState
 
-function BUILD_MATCHUP_MATRIX(team_states):
+function BUILD_UPCOMING_MATCH_PLAN(bracket_state, source_run):
+  required actions:
+    - erst nach vollständiger Ergebnis- und Bracket-Prüfung ausführen
+    - alle feststehenden, noch nicht beendeten Partien bis zum nächsten regulären Tageslauf bestimmen
+    - wenn nur sehr wenige Partien verbleiben, alle bereits feststehenden kommenden Partien aufnehmen
+    - offene winner_match_id-Platzhalter nicht als erfundene Paarung behandeln
+  returns:
+    list of UpcomingMatch
+
+function BUILD_PRE_MATCH_SOURCE_PLAN(upcoming_matches, prior_state):
+  required actions:
+    - erst nach Abschluss des Ergebnis-/Turnierkernlaufs und nach Bestimmung der kommenden Paarungen ausführen
+    - für jede feststehende kommende Partie einen eigenen, namentlich zugeordneten Suchblock erstellen
+    - pro Partie mindestens folgende Themen gezielt planen:
+      * T0: Termin, Anstoßzeit, Spielort, Turnierstatus und offizielle Schiedsrichteransetzung
+      * T1: Team-/Verbandsangaben zu Fitness, Verletzungen, Sperren, Training, Pressekonferenzen und Kader
+      * T3: Aufstellungen, erwartete Formationen, aktuelle Spielweise, Standards, Pressing, Umschalten und konkrete Gegnerinteraktionen
+      * T4: Ruhezeit, Reise, Höhe/Klima, Stadion-/Rasenkontext und Wetter zur Anstoßzeit
+      * T5: seriöse, möglichst auch lokale Berichte zu Teamumfeld, Stimmung und taktischen Erwartungen
+    - für wichtige teambezogene Suchen nach Möglichkeit zusätzlich Suchanfragen in der jeweiligen Teamsprache planen, ohne die Quellenqualitätsregeln abzusenken
+    - allgemeine und unerwartete Entwicklungen mit mindestens einer domainfreien Suche je Partie abdecken
+    - allgemeine Erwartungen klar von verbotenen T7-Prognosen trennen
+  returns:
+    PreMatchSourcePlan
+
+function FETCH_PRE_MATCH_SOURCES(pre_match_source_plan):
+  required actions:
+    - jeden geplanten Suchblock tatsächlich und getrennt pro Partie abarbeiten
+    - pro Themenblock belastbare Informationen oder no_confirmed_information_found dokumentieren
+    - Such-Snippets nicht als Fakten übernehmen; verwendete Aussagen in der Quelle öffnen und verifizieren
+    - Quellen eindeutig match_id und Themenbereich zuordnen
+    - T6 nur als warning_only behandeln
+    - T7 nicht suchen, öffnen oder verwenden
+  returns:
+    SourceRun
+
+function BUILD_PRE_MATCH_DOSSIERS(upcoming_matches, classified_sources, prior_state):
+  for each upcoming match:
+    - einen getrennten Rechercheblock nach T0, T1, T3, T4 und T5 ausführen
+    - offiziellen Termin, Anstoßzeit, Ort und Schiedsrichterstatus prüfen
+    - Fitness, Verletzungen, Sperren, Trainingsstatus und erwartete Aufstellungen beider Teams prüfen
+    - belastbare Pressekonferenz-/Trainer-/Verbandsaussagen und das Teamumfeld prüfen
+    - Spielweise beider Teams sowie konkrete Pressing-, Aufbau-, Umschalt-, Standard- und Rauminteraktionen beschreiben
+    - Ruhezeit, Reise und Wetter passend zu Ort und Anstoßzeit prüfen
+    - bei Gruppenspielen Tabellenstand, Qualifikationsszenario und plausible Rotation als group_scenario_relevance erfassen
+    - je Themenbereich SourceRecord-IDs zuordnen; fehlende Bestätigung ausdrücklich markieren
+    - frühere Dossiers nur als Vorzustand und Vergleich verwenden; aktuelle Angaben immer neu prüfen
+    - Stimmung nicht aus einzelnen allgemeinen Motivationszitaten ableiten
+    - Schiedsrichtervorteil nur bei bestätigter Ansetzung und belegter konkreter Stilinteraktion erwägen; Nationalität, Ruf oder Bauchgefühl sind keine Wirkungskette
+    - Wetterprognosen mit Vorhersagezeitpunkt und Unsicherheit speichern
+    - model_effect_allowed nur setzen, wenn eine vollständige post_prior_context_event_chain vorliegt
+    - bereits bekannte, unveränderte Stile und Kontextinformationen im Ausblick verwenden, aber dadurch kein neues Wahrscheinlichkeitsdelta erzeugen
+  returns:
+    list of PreMatchDossier
+
+function AUDIT_PRE_MATCH_DOSSIERS(upcoming_matches, pre_match_source_run, pre_match_source_quality, pre_match_dossiers):
+  required checks:
+    - pre_match_source_run_completed
+    - pre_match_source_quality_sufficient
+    - all_upcoming_matches_covered
+    - topic_coverage_by_match enthält T0, T1, T3, T4 und T5 oder dokumentierte Datenlücke
+    - unknown_items_explicit
+    - sources_attached_to_each_preview
+    - no_unconfirmed_fact_used
+    - no_t7_source_used
+    - no_double_counting
+    - contextual_effects_minimal
+    - knockout_pair_effects_zero_sum
+    - group_effects_scenario_gated
+  returns:
+    PreMatchAuditResult
+
+function BUILD_MATCHUP_MATRIX(team_states, pre_match_dossiers):
   required actions:
     - paarweise Matchups berechnen
     - Kontextnachteile berechnen
     - Shock-Vorteile berechnen
+    - Grundwahrscheinlichkeit aus Teamzustand und festem Turnierpfad berechnen
+    - Pre-Match-Kontext getrennt vom dauerhaften Teamzustand anwenden
+    - bestätigte Availability- und taktische Signale stärker gewichten als Wetter, Stimmung oder Schiedsrichterkontext
+    - alle kurzfristigen Pre-Match-Signale zu einem confidence-gewichteten Rohkontext in [-1.0, +1.0] je Paarung zusammenführen
+    - den Rohkontext mit einem starken Dämpfungsfaktor von höchstens 0.08 auf der Log-Odds-Skala anwenden; dies ist bewusst keine feste absolute Prozentpunktgrenze
+    - damped_context_effect = 0 setzen, wenn keine vollständige post_prior_context_event_chain vorliegt
+    - bei K.-o.-Spielen nur die bedingte Siegchance innerhalb der konkreten Paarung verschieben: Gewinn von Team A = Verlust von Team B und Summe = 100.0
+    - bei Gruppenspielen einen Kontextwert nur anwenden, wenn group_scenario_relevance einen konkreten Tabellen-, Qualifikations- oder Rotationsmechanismus belegt; sonst damped_context_effect = 0
+    - kurzfristigen Kontext nicht als dauerhafte Überschreibung von SCI, TBI, AMCI, SAI oder FQ verwenden
+    - dasselbe Signal nicht zusätzlich vollständig in Teamindizes, Matchup-Kontext und Crash-Risk zählen
   returns:
     MatchupMatrix
 
-function SIMULATE_PATHS(matchup_matrix, team_states):
+function SIMULATE_PATHS(matchup_matrix, team_states, bracket_state):
   preferred:
     - exact path enumeration
+    - use bracket_state as the fixed knockout tree whenever bracket_state.bracket_locked == true
+    - do not simulate impossible finals between teams in the same half
+    - do not simulate impossible semi-finals between teams in different linked quarter slots
+    - when a match is completed, propagate winner=100% to reached round and loser=0% to all later rounds
   fallback:
     - seeded Monte Carlo
     - seed = 26062026
     - iterations = 100000
+    - every Monte Carlo draw must follow bracket_state winner_to links and fixed participants/placeholders
   returns:
     PathResult
 
-function NORMALIZE_PROBABILITIES(path_result):
+function NORMALIZE_PROBABILITIES(path_result, bracket_state):
   required actions:
     - negative Werte auf 0 setzen
-    - Summe auf 100 normalisieren
-    - Summe prüfen: 99.5 bis 100.5
+    - title_probability_percent auf 100.0 normalisieren
+    - final_probability_percent auf 200.0 prüfen bzw. normalisieren
+    - semi_final_probability_percent auf 400.0 prüfen bzw. normalisieren, solange der Wert intern relevant ist
+    - quarter_final_probability_percent auf 800.0 prüfen bzw. normalisieren, solange der Wert intern relevant ist
+    - pro Team Monotonie prüfen: 0.0 <= title <= final <= semi_final <= quarter_final <= 100.0
+    - für jede offene/feste Paarung die nächste Rundenchance prüfen:
+      * R16 match: team_a.qf + team_b.qf = 100.0
+      * QF match: team_a.semi_final + team_b.semi_final = 100.0
+      * SF match: team_a.final + team_b.final = 100.0
+      * Final match: team_a.title + team_b.title = 100.0
+    - Title % bleibt nur global auf 100.0 normiert; keine 50/50-Summe je Baumhälfte erzwingen
   returns:
     ProbabilityResult
 
-function ATTACH_PROBABILITIES(team_states, probability_result):
+function ATTACH_PROBABILITIES(team_states, probability_result, bracket_state):
   required actions:
     - title_probability setzen
     - final_probability setzen
+    - semi_final_probability setzen
     - quarter_final_probability setzen
     - early_exit_probability setzen
+    - display_intermediate_probability aus bracket_state/probability_result übernehmen
   returns:
     list of TeamState
 
@@ -685,16 +951,23 @@ function BUILD_MAIN_PROBABILITY_TABLE(team_states, prior_state, current_event_ch
     - Freie Tabellenplätze müssen mit noch aktiven Teams gefüllt werden, die fachlich im Restfeld-Aggregat enthalten sind.
     - Ausgeschiedene Teams aus dem Restfeld dürfen nicht als Füllteams erscheinen; sie bleiben nur in Status-/Archivabschnitten nachvollziehbar.
     - Restfeld-Füllteams nach internem Restfeld-Wert absteigend auswählen; wenn diese Werte im Prior-State nicht bestimmt sind, muss der Lauf sie aus Restfeld-Signalen, K.o.-Pfad, Qualifikationsstatus, Gegnerpfad, Teamstärke-/Indexhinweisen und aktuellen Quellen nachvollziehbar ermitteln.
-    - Restfeld-Füllteams sind keine reinen Anzeigezeilen: Wenn sie in der Haupttabelle erscheinen, müssen title_probability_percent, final_probability_percent, quarter_final_probability_percent, early_exit_probability_percent und crash_risk_score vollständig modelliert werden.
-    - Dasselbe gilt für eine verbleibende Restfeld-Restzeile als Aggregat für Title, Final und QF. early_exit_probability_percent und crash_risk_score bleiben bei der Restfeld-Rest-Aggregatzeile leer, solange sie nicht ausdrücklich als gewichtete Aggregatindikatoren mit eigener Kennzeichnung definiert werden.
+    - Restfeld-Füllteams sind keine reinen Anzeigezeilen: Wenn sie in der Haupttabelle erscheinen, müssen title_probability_percent, final_probability_percent, quarter_final_probability_percent, semi_final_probability_percent, early_exit_probability_percent und crash_risk_score vollständig modelliert werden.
+    - Dasselbe gilt für eine verbleibende Restfeld-Restzeile als Aggregat für Title, Final und die aktuell angezeigte Zwischenrunde. early_exit_probability_percent und crash_risk_score bleiben bei der Restfeld-Rest-Aggregatzeile leer, solange sie nicht ausdrücklich als gewichtete Aggregatindikatoren mit eigener Kennzeichnung definiert werden.
     - Für Restfeld-Füllteams und Restfeld-Restzeile dürfen keine Werte erfunden oder doppelt gezählt werden: Summe der Füllteam-Titelwerte plus Restfeld-Restzeile muss exakt der bisherigen Restfeld-Gesamtwahrscheinlichkeit entsprechen.
-    - Final-/Viertelfinal-/Early-Exit- und Crash-Risk-Werte müssen aus derselben Pfadsimulation bzw. derselben Restfeld-Komponentenrechnung stammen; wenn das nicht möglich ist, gilt der Lauf als nicht erfolgreich und darf nicht finalisiert werden.
+    - Final-/Halbfinal-/Viertelfinal-/Early-Exit- und Crash-Risk-Werte müssen aus derselben Pfadsimulation bzw. derselben Restfeld-Komponentenrechnung stammen; wenn das nicht möglich ist, gilt der Lauf als nicht erfolgreich und darf nicht finalisiert werden.
     - Wenn Restfeld-Komponenten neu aus dem Aggregat gehoben werden, muss geprüft werden, ob die Pfadsimulation dadurch andere Teams beeinflusst; nötige Korrekturen an anderen Teams müssen mit Kausalkette dokumentiert werden.
     - Die Restfeld-Restzeile steht immer am Ende der Haupttabelle, solange ein positiver Restfeld-Rest verbleibt.
     - Wenn kein positives Restfeld mehr existiert, wird keine Restfeld-Zeile angezeigt und die Haupttabelle darf weniger als 25 Zeilen haben.
     - Ränge nach dieser Anzeige-/Lebenszyklusregel lückenlos neu berechnen.
     - Probability-Summe bleibt über modellierte Einzelteams plus Restfeld-Füllteams plus Restfeld-Restzeile 100.0.
-    - Summenprüfungen: Summe title_probability_percent = 100.0; Summe final_probability_percent = 200.0; Summe quarter_final_probability_percent = 800.0. Diese Regeln gelten über die gesamte Haupttabelle inklusive Restfeld-Komponenten und Restfeld-Rest-Aggregat.
+    - Title % und Final % bleiben feste Tabellenspalten.
+    - Die Zwischenrunden-Spalte wird aus probability_result.display_intermediate_probability gewählt:
+      * quarter_final_probability -> ausschließlich Tabellenkopf "QF %" und Summe 800.0; HF % nicht anzeigen.
+      * semi_final_probability -> ausschließlich Tabellenkopf "HF %" bzw. "Semi-final %" und Summe 400.0; QF % vollständig aus der HTML-Haupttabelle entfernen.
+      * none -> keine Zwischenrunden-Spalte anzeigen, wenn nur noch das Finale offen ist; insbesondere weder QF % noch HF % anzeigen.
+    - Das Anzeige-Gate ist exklusiv: In der HTML-Haupttabelle darf nie mehr als eine Zwischenrunden-Spalte gleichzeitig erscheinen. Frühere Rundenwerte bleiben ausschließlich für Audit und Verlustfreiheit im Prior-State erhalten.
+    - Summenprüfungen: Summe title_probability_percent = 100.0; Summe final_probability_percent = 200.0; wenn QF % angezeigt wird, Summe quarter_final_probability_percent = 800.0; wenn HF % angezeigt wird, Summe semi_final_probability_percent = 400.0. Diese Regeln gelten über die gesamte Haupttabelle inklusive Restfeld-Komponenten und Restfeld-Rest-Aggregat.
+    - Monotonieprüfung pro Team: title_probability_percent <= final_probability_percent <= semi_final_probability_percent <= quarter_final_probability_percent und kein Rundenwert > 100.0.
     - crash_risk_score wird nicht aufsummiert; für Einzelteams ist er individuell, für eine Restfeld-Rest-Aggregatzeile bleibt er leer oder wird ausdrücklich als gewichteter Aggregatindikator markiert.
     - early_exit_probability_percent wird für Einzelteams modelliert; für eine Restfeld-Rest-Aggregatzeile bleibt er leer oder wird ausdrücklich als gewichteter Aggregatindikator markiert.
   returns:
@@ -716,7 +989,7 @@ function GENERATE_CAUSAL_CHAINS(team_states, signals, probability_result):
   returns:
     CausalChainSet
 
-function AUDIT_MODEL(context, source_run, source_quality, bias_result, signals, team_states, probability_result, causal_chains):
+function AUDIT_MODEL(context, source_run, source_quality, bias_result, signals, team_states, probability_result, bracket_state, causal_chains, pre_match_dossiers, pre_match_audit):
   checks:
     - current_sources_fetched
     - t0_core_checked
@@ -726,12 +999,32 @@ function AUDIT_MODEL(context, source_run, source_quality, bias_result, signals, 
     - no_delta_without_post_prior_source
     - no_synthetic_delta_created
     - probability_sum_passed
+    - bracket_state_complete_when_locked
+    - bracket_winner_to_links_acyclic
+    - per_team_round_monotonicity_passed
+    - no_round_probability_above_100
+    - r16_pair_qf_sum_100_when_applicable
+    - qf_pair_semi_final_sum_100_when_applicable
+    - sf_pair_final_sum_100_when_applicable
+    - final_pair_title_sum_100_when_applicable
+    - no_impossible_final_between_same_half_teams
+    - title_probability_global_sum_100_without_half_side_balancing
     - t7_external_forecasts_blocked
     - no_t7_sources_loaded_or_used
     - social_media_sets_no_fact
     - every_output_has_causal_chain
     - confidence_not_above_data_quality
     - bias_flags_visible
+    - every_upcoming_match_has_pre_match_dossier
+    - pre_match_unknowns_are_explicit
+    - every_match_preview_has_direct_sources
+    - pre_match_context_effect_is_strongly_damped
+    - knockout_pre_match_adjustment_is_pairwise_zero_sum
+    - group_pre_match_adjustment_has_scenario_mechanism_or_is_zero
+    - referee_effect_has_confirmed_appointment_and_style_evidence_or_is_zero
+    - mood_effect_has_multiple_reliable_indicators_or_is_zero
+    - every_nonzero_pre_match_effect_has_post_prior_context_event_chain
+    - no_pre_match_signal_double_counted
     - if group stage final is complete: group_stage_final_qualification_gate_completed
     - if group stage final is complete: best_third_placed_verified
     - if group stage final is complete: knockout_qualified_teams_complete
@@ -765,12 +1058,21 @@ function RENDER_OUTPUT(...):
     8 Veränderungen
     9 Kausalketten
     10 Crash-Risk
-    11 Nächste Beobachtungsvariablen
-    12 Audit
-    13 Exportierte Dateien
+    11 Ausblick auf kommende Spiele
+    12 Nächste Beobachtungsvariablen
+    13 Audit
+    14 Exportierte Dateien
   required actions:
     - Verwende für Abschnitt 6 und TITLE_PROBABILITY_PRIOR_TABLE die Ausgabe von BUILD_MAIN_PROBABILITY_TABLE.
     - Die Reihenfolge und Ränge in deutscher HTML, englischer HTML und Prior-State-Tabelle müssen identisch sein.
+    - Title % und Final % bleiben in der HTML-Wahrscheinlichkeitstabelle sichtbar.
+    - Die Zwischenrunden-Spalte wird gemäß MainProbabilityTable.display_intermediate_probability exklusiv beschriftet: nur QF %, nur HF %/Semi-final % oder gar nicht, wenn nur noch das Finale offen ist. Sobald HF % angezeigt wird, darf QF % nicht mehr in der HTML-Haupttabelle stehen; sobald nur noch das Finale offen ist, dürfen weder QF % noch HF % dort stehen. Die vollständigen Rundenwerte bleiben im Prior-State erhalten.
+    - Abschnitt 11 stellt jede feststehende kommende Partie einzeln und informativ dar.
+    - Pro Partie mindestens aufführen: Termin/Ort, verfügbare Spieler- und Aufstellungsinformationen, Teamumfeld, taktische Stilinteraktionen, Schiedsrichterstatus, Ruhe/Reise, Wetter sowie Unsicherheiten.
+    - Keine künstliche Vorteilsbehauptung erzwingen: Wenn ein Faktor keine belastbare Richtung hat, neutral oder unbekannt ausweisen.
+    - Die geringe Modellwirkung getrennt vom informativen Ausblick kennzeichnen; der Umfang des Textes darf größer sein als seine Wahrscheinlichkeitswirkung.
+    - Quellen als direkt zugeordnete anklickbare Links bei der jeweiligen Partie bzw. dem jeweiligen Faktenblock anzeigen, nicht nur gesammelt im allgemeinen Quellenabschnitt.
+    - Deutsche HTML vollständig deutsch und englische HTML vollständig englisch formulieren; Eigennamen und Quellentitel dürfen originalsprachlich bleiben.
   returns:
     OutputDocument
 
@@ -894,13 +1196,18 @@ function EXPORT_ARTIFACTS(...):
     - begin with DYNAMO-26 PRIOR_STATE_FILE
     - contain processing instructions for next run
     - contain run metadata
+    - contain KNOCKOUT_BRACKET_STATE when group_stage_final_qualification_gate_passed=true
+    - KNOCKOUT_BRACKET_STATE must use the KnockoutBracketState structure with rounds and team_bracket_positions, not a free-text bracket description
     - contain source quality state
     - contain bias flags
     - contain non-blocking gaps
     - contain title probability prior table if status CURRENT or DEGRADED
+    - contain final_probability_percent, semi_final_probability_percent and quarter_final_probability_percent in the prior table when status CURRENT or DEGRADED, even if the displayed HTML intermediate column omits one of them
     - contain index prior table if status CURRENT or DEGRADED
     - contain crash risk prior table
     - contain causal chains
+    - contain PRE_MATCH_DOSSIERS with checked_at, topic evidence, source IDs, information gaps and applied damped_context_effect for every upcoming match
+    - persisted PRE_MATCH_DOSSIERS are audit/prior state only and must be researched again in the next run
     - contain audit summary
     - contain no HTML tags
   changes txt must:
@@ -988,7 +1295,11 @@ GATE_PROBABILITIES_ALLOWED:
   pass if:
     output_status in ["CURRENT", "DEGRADED"]
     probability_result.normalization_passed == true
+    probability_result.bracket_constraints_passed == true
     probability_sum between 99.5 and 100.5
+    final_probability_sum between 199.5 and 200.5
+    if display_intermediate_probability == quarter_final_probability: quarter_final_probability_sum between 799.5 and 800.5
+    if display_intermediate_probability == semi_final_probability: semi_final_probability_sum between 399.5 and 400.5
     audit.passed == true
 
 GATE_FINAL_DELIVERY_ALLOWED:
