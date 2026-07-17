@@ -1,0 +1,424 @@
+DYNAMO-26 PRIOR_STATE_FILE
+file_version: pipeline_v1.0
+created_for_next_run: true
+created_at_run_date: 2026-07-14
+created_at_berlin: 2026-07-14T12:49:36+02:00
+created_at_utc: 2026-07-14T10:49:36Z
+model_name: DYNAMO26 3.0
+model_version: pipeline_v1.0
+language: de
+intended_use: prior_state_input_for_next_DYNAMO_26_pipeline_run
+
+IMPORTANT_PROCESSING_INSTRUCTIONS_FOR_NEXT_STATE_MACHINE_RUN
+Diese Datei ist PRIOR_STATE, keine aktuelle Quelle. Der naechste Lauf muss FETCH_CURRENT_SOURCES neu ausfuehren. T7 ist vollstaendig verboten. Social Media ohne Bestaetigung setzt keinen Fakt.
+
+RUN_METADATA
+run_id: 20260714T104936Z
+run_date: 2026-07-14
+run_mode: DAILY_CURRENT_UPDATE_RETRY_ONCE
+run_result_type: CURRENT_WITH_NO_NEW_MODEL_EVENTS
+output_status: CURRENT
+confidence_level: MEDIUM
+source_quality_score: 88
+probability_sum: 100.0
+final_probability_sum: 200.0
+semi_final_probability_sum: 400.0
+quarter_final_probability_sum_audit_universe: 400.0
+probability_simulation_method: deterministic_fixed_knockout_tree_no_new_completed_matches
+probability_simulation_seed: deterministic_no_random_draw
+probability_simulation_iterations: exact_path_carry_forward
+prior_loaded_from_this_run: website/wm26/runs/dynamo26_prior_state_2026-07-13_pipeline_v1_0.txt
+prior_cutoff_utc: 2026-07-13T11:52:50Z
+sort_rule: title_probability_percent descending; ranks recalculated gapless 1..4
+
+SEARCH_QUERIES_USED
+- FIFA World Cup 2026 France Spain semifinal July 14 2026 official schedule
+- FIFA World Cup 2026 England Argentina semifinal July 15 2026 official schedule
+- World Cup 2026 bracket correction disciplinary decision July 14 2026
+- World Cup 2026 semifinal France Spain England Argentina team news July 14 2026
+- site:fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026 France Spain July 14 2026 semifinal FIFA
+- site:fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026 England Argentina July 15 2026 semifinal FIFA
+- 2026 FIFA World Cup semifinals schedule France Spain England Argentina official FIFA July 14 2026
+- France federation Spain World Cup semifinal July 14 2026 team news Deschamps Tchouameni Mbappe
+- Spain federation France World Cup semifinal July 14 2026 De la Fuente Pedri Lamine team news
+- England federation Argentina World Cup semifinal July 15 2026 team news Declan Rice Reece James
+- Argentina federation England World Cup semifinal July 15 2026 Scaloni team news
+- Arlington Texas weather July 14 2026 2 pm AT&T Stadium World Cup semifinal
+- Atlanta Georgia weather July 15 2026 3 pm Mercedes-Benz Stadium World Cup semifinal
+- World Cup 2026 France Spain semifinal referee Ivan Barton July 14 2026
+- World Cup 2026 England Argentina semifinal referee Ismail Elfath July 15 2026
+- World Cup 2026 France Spain social media controversy July 14 2026 Rajoy France team
+- World Cup 2026 England Argentina social media controversy July 14 2026 chants fans security
+- World Cup 2026 semifinal fan social media backlash referee VAR July 14 2026
+- Argentina England World Cup 2026 Malvinas chant social media July 14 2026
+
+CURRENT_SOURCE_EVENTS_USED
+- SRC_T0_FIFA_SCHEDULE_20260714 | tier=T0 | url=https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/match-schedule-fixtures-results-teams-stadiums | claim=FIFA tournament-core schedule/results page opened; page is dynamic in the text tool but treated as official core check only.
+- SRC_T5_GUARDIAN_FR_ESP_20260714 | tier=T5/T1 | url=https://www.theguardian.com/football/2026/jul/14/france-team-news-spain-world-cup-semi-final-euro-revenge | claim=Guardian reports France-Spain team-news context, Tchouameni availability and Mbappe training note.
+- SRC_T5_AP_FR_ESP_20260714 | tier=T5/T3 | url=https://apnews.com/article/world-cup-semifinals-france-spain-1fcbd397cb402688024b706f222b1b93 | claim=AP verifies France-Spain semifinal and the four-team semifinal state.
+- SRC_T5_GUARDIAN_LIVE_20260714 | tier=T5/T3/T6 | url=https://www.theguardian.com/football/live/2026/jul/14/world-cup-2026-france-spain-buildup-england-argentina-news-live | claim=Guardian live build-up reports current semifinal day context, Spain travel load and Rice fitness reference; warning-only live-blog context set no model fact.
+- SRC_T5_GUARDIAN_RICE_20260714 | tier=T5/T1/T0 | url=https://www.theguardian.com/football/2026/jul/13/england-declan-rice-winning-fitness-battle-argentina-world-cup | claim=Guardian reports Declan Rice expected to start, Ezri Konsa likely available and FIFA appointment of Ismail Elfath for England-Argentina.
+- SRC_T5_GUARDIAN_ARG_SCOUT_20260714 | tier=T5/T3 | url=https://www.theguardian.com/football/2026/jul/13/world-cup-2026-scouting-report-the-lowdown-on-england-semi-final-opponents-argentina | claim=Guardian scouting report documents Argentina tactical profile for the England semifinal.
+- SRC_T5_CADENASER_DE_LA_FUENTE_20260714 | tier=T5/T1 | url=https://cadenaser.com/nacional/2026/07/14/y-si-si-luis-de-la-fuente-le-quita-presion-a-lamine-yamal-y-suena-con-la-guinda-de-ganar-el-mundial-cadena-ser/ | claim=Cadena SER reports Luis de la Fuente press-conference framing and Spain tactical/availability context.
+- SRC_T5_CADENASER_FR_ESP_20260714 | tier=T5/T3 | url=https://cadenaser.com/nacional/2026/07/13/francia-espana-en-directo-el-partido-de-semifinales-del-mundial-2026-en-vivo-cadena-ser/ | claim=Cadena SER verifies France-Spain timing and provides probable lineups/tactical framing; projections are not facts.
+- SRC_T5_AS_LINEUP_20260714 | tier=T5/T3 | url=https://as.com/futbol/seleccion/alineacion-posible-de-espana-contra-francia-en-las-semifinales-del-mundial-2026-f202607-n/ | claim=AS probable Spain lineup and midfield options; treated as expected-lineup context only.
+- SRC_T4_SUN_ATLANTA_WEATHER_20260714 | tier=T4/T5 | url=https://www.thesun.co.uk/sport/39741266/is-atlanta-stadium-air-conditioned-weather-england-argentina/ | claim=Sun reports Atlanta stadium roof/climate-control context; no direct weather edge is used.
+- SRC_T6_PUBLIC_SOCIAL_SCAN_20260714 | tier=T6 | url=https://apnews.com/article/spain-france-world-cup-racism-mariano-rajoy-d794c05fc9ebcbf7876148674c9f8697 | claim=Public warning scan found Rajoy/France racism controversy and England-Argentina fan/referee tension; warning_only, no fact and no model effect.
+
+SOURCE_LIMITATION_NOTE
+- Search snippets alone set no fact.
+- Internal Codex web search worked; Chrome fallback was not used.
+- FIFA official core page was opened but exposed limited dynamic text in the tool; independent current sources verified the semifinal state and pre-match context.
+- Incidentally returned forbidden betting, tips, voting, power-ranking and prediction hits were ignored and not opened.
+- T7 forecasts, projections, bookmaker odds, Elo, ranking probabilities, FIFA-ranking substitutes and media probabilities were not searched, opened, cited or used for calibration.
+- Social media warning scan set no fact.
+
+NEW_MATCH_COMPLETENESS_GATE
+prior_cutoff_utc: 2026-07-13T11:52:50Z
+control_list_count: 0
+completed_matches_after_prior_cutoff: none
+open_matches_at_audit_time: SF_1 France-Spain scheduled; SF_2 England-Argentina scheduled
+new_matches_complete: true
+
+GROUP_STAGE_FINAL_QUALIFICATION_GATE
+group_stage_finished_official_core: true
+prior_state_had_group_stage_final_qualification_gate_passed: true
+prior_state_had_complete_knockout_bracket_state: true
+gate_executed_this_run: false
+gate_reused_from_prior_state: true
+official_correction_scan_completed: true
+official_correction_or_bracket_change_found: false
+group_stage_final_qualification_gate_passed: true
+group_stage_final_qualification_gate_checked_at: 2026-07-14T12:49:36+02:00
+qualified_teams: Mexico, USA, Germany, Argentina, France, Norway, Colombia, Switzerland, Canada, Brazil, Morocco, Bosnia and Herzegovina, South Africa, Cote d Ivoire, Ecuador, Netherlands, Japan, Sweden, Australia, Spain, Cabo Verde, Paraguay, Belgium, Egypt, Senegal, England, Croatia, Ghana, Portugal, Congo DR, Austria, Algeria
+best_third_placed_teams: Bosnia and Herzegovina, Ecuador, Sweden, Paraguay, Senegal, Ghana, Congo DR, Algeria
+eliminated_teams: Haiti, Tunisia, Turkiye, Jordan, Panama, Qatar, Czechia, Curacao, Iraq, Uruguay, Saudi Arabia, New Zealand, Scotland, Uzbekistan, Korea Republic, IR Iran
+knockout_eliminated_teams_after_prior_cutoff: Morocco, Belgium, Norway, Switzerland
+qualification_gate_reopen_only_on_official_correction: true
+
+KNOCKOUT_BRACKET_STATE
+current_stage: semi_final
+bracket_locked: true
+checked_at: 2026-07-14T12:49:36+02:00
+display_intermediate_probability: semi_final_probability
+reopen_only_on_official_correction: true
+sources: [SRC_T0_FIFA_SCHEDULE_20260714, SRC_T5_AP_FR_ESP_20260714, SRC_T5_GUARDIAN_RICE_20260714]
+rounds:
+  - match_id: QF_1
+    round: quarter_final
+    slot: upper_sf1_a
+    team_a: France
+    team_b: Morocco
+    status: completed
+    score: France 2-0 Morocco
+    winner: France
+    winner_to: SF_1
+    loser_eliminated: true
+    half: upper
+    quarter: q1
+    sources: [carried_forward_from_prior_state]
+  - match_id: QF_2
+    round: quarter_final
+    slot: upper_sf1_b
+    team_a: Spain
+    team_b: Belgium
+    status: completed
+    score: Spain 2-1 Belgium
+    winner: Spain
+    winner_to: SF_1
+    loser_eliminated: true
+    half: upper
+    quarter: q2
+    sources: [carried_forward_from_prior_state]
+  - match_id: QF_3
+    round: quarter_final
+    slot: lower_sf2_a
+    team_a: Norway
+    team_b: England
+    status: completed
+    score: England 2-1 Norway after extra time
+    winner: England
+    winner_to: SF_2
+    loser_eliminated: true
+    half: lower
+    quarter: q3
+    sources: [carried_forward_from_prior_state]
+  - match_id: QF_4
+    round: quarter_final
+    slot: lower_sf2_b
+    team_a: Argentina
+    team_b: Switzerland
+    status: completed
+    score: Argentina 3-1 Switzerland after extra time
+    winner: Argentina
+    winner_to: SF_2
+    loser_eliminated: true
+    half: lower
+    quarter: q4
+    sources: [carried_forward_from_prior_state]
+  - match_id: SF_1
+    round: semi_final
+    slot: final_a
+    team_a: France
+    team_b: Spain
+    status: scheduled
+    score: null
+    winner: null
+    winner_to: FINAL
+    loser_eliminated: false
+    half: upper
+    quarter: null
+    sources: [SRC_T5_AP_FR_ESP_20260714, SRC_T5_CADENASER_FR_ESP_20260714]
+  - match_id: SF_2
+    round: semi_final
+    slot: final_b
+    team_a: England
+    team_b: Argentina
+    status: scheduled
+    score: null
+    winner: null
+    winner_to: FINAL
+    loser_eliminated: false
+    half: lower
+    quarter: null
+    sources: [SRC_T5_GUARDIAN_RICE_20260714, SRC_T5_GUARDIAN_ARG_SCOUT_20260714]
+  - match_id: FINAL
+    round: final
+    slot: title
+    team_a: winner:SF_1
+    team_b: winner:SF_2
+    status: scheduled
+    score: null
+    winner: null
+    winner_to: CHAMPION
+    loser_eliminated: false
+    half: final
+    quarter: null
+    sources: [SRC_T0_FIFA_SCHEDULE_20260714]
+team_bracket_positions:
+  - team: France
+    status: live
+    half: upper
+    quarter: q1
+    slot: SF_1_a
+    current_match_id: SF_1
+    possible_next_match_id: FINAL
+  - team: Spain
+    status: live
+    half: upper
+    quarter: q2
+    slot: SF_1_b
+    current_match_id: SF_1
+    possible_next_match_id: FINAL
+  - team: England
+    status: live
+    half: lower
+    quarter: q3
+    slot: SF_2_a
+    current_match_id: SF_2
+    possible_next_match_id: FINAL
+  - team: Argentina
+    status: live
+    half: lower
+    quarter: q4
+    slot: SF_2_b
+    current_match_id: SF_2
+    possible_next_match_id: FINAL
+  - team: Morocco
+    status: eliminated_previous_run
+    current_match_id: QF_1
+  - team: Belgium
+    status: eliminated_previous_run
+    current_match_id: QF_2
+  - team: Norway
+    status: eliminated_previous_run
+    current_match_id: QF_3
+  - team: Switzerland
+    status: eliminated_previous_run
+    current_match_id: QF_4
+
+TITLE_PROBABILITY_PRIOR_TABLE
+rank,team,title_probability_percent,final_probability_percent,semi_final_probability_percent,quarter_final_probability_percent,early_exit_probability_percent,crash_risk_score,main_positive_driver,main_negative_risk,confidence
+1,France,31.0,55.9,100.0,100.0,44.1,23.0,France remains in SF_1 with the strongest control profile.,Spain is locked in and the final branch is stronger.,MEDIUM
+2,Spain,24.2,44.1,100.0,100.0,55.9,28.0,Spain keeps the confirmed SF_1 route after beating Belgium.,France remains the immediate barrier.,MEDIUM
+3,England,23.2,52.0,100.0,100.0,48.0,44.0,Verified quarter-final win over Norway already removed QF_3 risk in the prior run.,Argentina semi-final plus performance volatility cap upside.,MEDIUM
+4,Argentina,21.6,48.0,100.0,100.0,52.0,49.0,Verified quarter-final win over Switzerland already removed QF_4 risk in the prior run.,England semi-final plus extra-time and referee-contested routes keep volatility visible.,MEDIUM
+
+INDEX_PRIOR_TABLE
+team,affected_indices,direction,D_prior,D_current,mechanism
+France/Spain/England/Argentina,SCI/TBI/CSI/AMCI/SAI/FQ,unchanged,prior value,prior value,No complete post-prior event chain supports permanent team-index update.
+SF_1,MatchupContext,zero,0.0,0.0,Referee/team-news/travel context informational only; no non-duplicative directional edge.
+SF_2,MatchupContext,zero,0.0,0.0,Rice/Elfath/weather/rivalry context strongly damped to zero.
+
+CRASH_RISK_PRIOR_TABLE
+France,23.0,Spain semi-final and stronger final branch remain material.
+Spain,28.0,France semi-final remains the immediate cap.
+England,44.0,Argentina semi-final and low-control Norway win keep volatility visible.
+Argentina,49.0,England semi-final plus extra-time and referee-contested routes keep risk elevated.
+Morocco,100.0,Title path closed before this run.
+Belgium,100.0,Title path closed before this run.
+Norway,100.0,Title path closed before this run and removed from main table by lifecycle rule.
+Switzerland,100.0,Title path closed before this run and removed from main table by lifecycle rule.
+
+CAUSAL_CHAINS_CURRENT
+- No completed match after prior cutoff -> bracket unchanged -> title probabilities remain unchanged.
+- France-Spain current team-news and travel context -> no reliable, non-duplicative directional edge -> damped_context_effect 0.0.
+- England-Argentina Rice, Elfath, weather and rivalry context -> no reliable directional chain beyond information -> damped_context_effect 0.0.
+- T6 warning scan found social/political/referee controversy -> warning_only -> no fact and no model effect.
+- T7 was not searched, opened or used; incidental forbidden search hits were ignored.
+
+CHANGE_SUMMARY_CURRENT
+- No material probability movement. Current source run found no completed match after the prior cutoff and no nonzero pre-match context chain.
+- Current pre-match updates are informational and kept at damped_context_effect 0.0.
+- T6 warning scan set no fact. T7 was not searched, opened or used.
+
+PRE_MATCH_DOSSIERS
+  - match_id: SF_1
+    competition_stage: semi_final
+    teams: France - Spain
+    kickoff_at: 2026-07-14T14:00:00-05:00 / 21:00 CEST
+    venue: Dallas Stadium / AT&T Stadium, Arlington
+    referee: Ivan Barton carried from prior current appointment reporting; no concrete style edge is used.
+    team_availability: France: current reporting says Tchouameni is available and Mbappe trained after the late Morocco knock. Spain: no new confirmed absence in opened current sources; De la Fuente discussed Lamine Yamal pressure management and the team's World Cup target.
+    expected_lineups: Official XIs unknown. Cadena SER and AS provide probable Spain/France lineups and midfield options; these remain projections, not facts.
+    team_environment: France frame the match as revenge/opportunity after recent Spain defeats. Spain camp publicly lowers Lamine Yamal pressure and stresses the final as the objective.
+    playing_style_and_tactical_interactions: France vertical Mbappe-Dembele-Olise/Doue threat meets Spain possession, counterpressing, Rodri control and Lamine Yamal/Dani Olmo wide-halfspace creation. Spain travel load and France directness are preview context only.
+    rest_and_travel_context: France had one extra rest day from the July 9 quarter-final while Spain played July 10 and had heavier cross-tournament travel. No quantified post-prior training-load chain supports a probability change.
+    weather_at_kickoff: Dallas/Arlington venue remains indoor/climate-controlled context; no direct weather edge is used.
+    group_scenario_relevance: not_applicable_knockout
+    evidence_by_topic: T0=[SRC_T0_FIFA_SCHEDULE_20260714]; T1=[SRC_T5_GUARDIAN_FR_ESP_20260714,SRC_T5_CADENASER_DE_LA_FUENTE_20260714]; T3=[SRC_T5_AP_FR_ESP_20260714,SRC_T5_CADENASER_FR_ESP_20260714,SRC_T5_AS_LINEUP_20260714]; T4=[SRC_T0_FIFA_SCHEDULE_20260714]; T5=[SRC_T5_GUARDIAN_FR_ESP_20260714,SRC_T5_AP_FR_ESP_20260714,SRC_T5_CADENASER_DE_LA_FUENTE_20260714]; T6=[SRC_T6_PUBLIC_SOCIAL_SCAN_20260714]
+    source_ids: [SRC_T0_FIFA_SCHEDULE_20260714, SRC_T5_GUARDIAN_FR_ESP_20260714, SRC_T5_AP_FR_ESP_20260714, SRC_T5_CADENASER_DE_LA_FUENTE_20260714, SRC_T5_CADENASER_FR_ESP_20260714, SRC_T5_AS_LINEUP_20260714, SRC_T6_PUBLIC_SOCIAL_SCAN_20260714]
+    checked_at: 2026-07-14T12:49:36+02:00
+    freshness: current_with_documented_gaps
+    confidence: MEDIUM
+    information_gaps: Official starting XIs, official FIFA match sheet in the tool, final medical confirmation, exact stadium operation and full training bulletins remain unknown.
+    raw_context_direction: informational_only
+    damped_context_effect: 0.0
+    model_effect_allowed: false_nonzero_blocked
+    model_effect_reason: Current availability and tactical context are useful for preview but do not create a complete reliable non-duplicative probability chain; knockout pair adjustment remains zero-sum at 0.0/0.0.
+    post_prior_context_event_chain: documented_but_zero_effect
+  - match_id: SF_2
+    competition_stage: semi_final
+    teams: England - Argentina
+    kickoff_at: 2026-07-15T15:00:00-04:00 / 21:00 CEST
+    venue: Atlanta Stadium / Mercedes-Benz Stadium, Atlanta
+    referee: Ismail Elfath reported as appointed by FIFA in current reputable reporting. No style or favoritism edge is used.
+    team_availability: England: Declan Rice expected to recover and start; Ezri Konsa likely available; Reece James and Bukayo Saka could return after substitute appearances. Argentina: no new confirmed absence in opened current sources.
+    expected_lineups: Official XIs unknown. England Rice-Anderson midfield and right-side choices remain open. Argentina Messi-led attacking structure and midfield balance remain open until the match sheet.
+    team_environment: England emphasise composure and discipline in a high-emotion rivalry. Argentina-England historical and fan tension is visible but warning-only unless independently confirmed into a concrete operational fact.
+    playing_style_and_tactical_interactions: England Bellingham/Kane/Saka direct threat and set-piece power meet Argentina Messi-led central overloads, compact rest-defense tests and late-game resilience. The tactical report informs the preview, not a model delta.
+    rest_and_travel_context: Both semifinalists came through extra-time quarter-finals on July 11 and remain in the eastern/central U.S. window. No rest edge is applied.
+    weather_at_kickoff: Atlanta stadium roof and climate-control context reduce direct weather impact; local preparation disruption remains a non-blocking gap.
+    group_scenario_relevance: not_applicable_knockout
+    evidence_by_topic: T0=[SRC_T0_FIFA_SCHEDULE_20260714,SRC_T5_GUARDIAN_RICE_20260714]; T1=[SRC_T5_GUARDIAN_RICE_20260714,SRC_T5_GUARDIAN_LIVE_20260714]; T3=[SRC_T5_GUARDIAN_ARG_SCOUT_20260714]; T4=[SRC_T4_SUN_ATLANTA_WEATHER_20260714]; T5=[SRC_T5_GUARDIAN_RICE_20260714,SRC_T5_GUARDIAN_ARG_SCOUT_20260714]; T6=[SRC_T6_PUBLIC_SOCIAL_SCAN_20260714]
+    source_ids: [SRC_T0_FIFA_SCHEDULE_20260714, SRC_T5_GUARDIAN_RICE_20260714, SRC_T5_GUARDIAN_LIVE_20260714, SRC_T5_GUARDIAN_ARG_SCOUT_20260714, SRC_T4_SUN_ATLANTA_WEATHER_20260714, SRC_T6_PUBLIC_SOCIAL_SCAN_20260714]
+    checked_at: 2026-07-14T12:49:36+02:00
+    freshness: current_with_documented_gaps
+    confidence: MEDIUM
+    information_gaps: Official starting XIs, Argentina final training detail, full suspension bulletin and exact Atlanta operations remain unknown.
+    raw_context_direction: informational_only
+    damped_context_effect: 0.0
+    model_effect_allowed: false_nonzero_blocked
+    model_effect_reason: Rice fitness and referee appointment are current facts but do not establish a reliable non-duplicative directional model edge. Mood/referee effects remain zero. Knockout pair adjustment remains zero-sum at 0.0/0.0.
+    post_prior_context_event_chain: documented_but_zero_effect
+
+PRE_MATCH_AUDIT
+completed: true
+pre_match_source_run_completed: true
+pre_match_source_quality_sufficient: true
+all_upcoming_matches_covered: true
+topic_coverage_by_match:
+  SF_1: T0,T1,T3,T4,T5,T6_with_gaps_marked
+  SF_2: T0,T1,T3,T4,T5,T6_with_gaps_marked
+unknown_items_explicit: true
+sources_attached_to_each_preview: true
+no_unconfirmed_fact_used: true
+no_t7_source_used: true
+no_double_counting: true
+contextual_effects_minimal: true_all_zero
+knockout_pair_effects_zero_sum: true_all_zero
+group_effects_scenario_gated: true_no_group_matches
+failed_checks: none
+
+SOURCE_QUALITY_STATE
+source_run_completed: true
+current_sources_fetched: true
+T0_core_checked: true_with_dynamic_text_limitation
+T1_team_checked: true_context
+T3_public_data_checked: true
+T4_context_checked: true
+T5_news_checked: true
+T6_social_checked: true_warning_only
+T7_calibration_checked: false_forbidden
+t7_external_forecasts_blocked: true
+no_t7_sources_loaded_or_used: true
+credibility_score: 88
+freshness_score: 92
+independence_score: 84
+specificity_score: 86
+actionability_score: 82
+source_quality_score: 88
+unresolved_blocking_conflicts: none
+missing_critical_data: none
+non_blocking_data_gaps: official XIs; exact FIFA match-sheet text extraction; exact matchday weather operations; complete official training bulletins.
+
+BIAS_FLAGS
+recency_bias_flag: controlled_by_exact_cutoff_and_no_synthetic_deltas
+star_bias_flag: visible_for_Messi_Mbappe_Bellingham_coverage_but_no_unchecked_effect
+market_bias_flag: blocked_no_T7
+social_hype_bias_flag: blocked_T6_warning_only
+injury_rumor_bias_flag: controlled_unofficial_reports_do_not_move_probabilities
+english_language_bias_flag: mitigated_with_Spanish_sources_and_official_core_check
+regional_undercoverage_flag: non_blocking_for_official_training_details
+closed_data_bias_flag: visible_non_blocking
+
+AUDIT_SUMMARY_CURRENT
+current_sources_fetched: true
+source_run_completed: true
+T0_core_checked: true_with_dynamic_text_limitation
+T1_team_checked: true_context
+T3_public_data_checked: true
+T4_context_checked: true
+T5_news_checked: true
+T6_social_checked: true_warning_only
+SRC_T6_PUBLIC_SOCIAL_SCAN_20260714: documented_warning_only_no_fact
+T7_external_forecasts_blocked: true
+no_t7_sources_loaded_or_used: true
+social_media_sets_no_fact: true
+new_matches_complete: true
+all_upcoming_matches_have_pre_match_dossier: true
+pre_match_unknowns_are_explicit: true
+every_match_preview_has_direct_sources: true
+pre_match_context_effect_is_strongly_damped: true_all_zero
+knockout_pre_match_adjustment_is_pairwise_zero_sum: true_all_zero
+every_nonzero_pre_match_effect_has_post_prior_context_event_chain: true_vacuous
+no_pre_match_signal_double_counted: true
+group_stage_final_qualification_gate_passed: true
+knockout_bracket_state_complete: true
+probability_sum_passed: true 100.0
+final_probability_sum_passed: true 200.0
+semi_final_probability_sum_passed: true 400.0
+display_intermediate_probability_exclusive: true semi_final_probability
+probability_monotone_nonincreasing: true
+ranks_gapless_1_to_4: true
+same_order_de_html_en_html_prior_table: true
+prior_state_lossless_check_team_count_equal_or_archived: true
+artifact_audit_passed: true
+prior_state_used_only_as_prior: true
+all_deltas_have_new_event_chain: true_vacuous
+no_synthetic_delta_created: true
+matchup_matrix_built: true
+path_simulation_completed: true
+audit_passed: true
+
+LOSSLESS_PRIOR_STATE_CARRY_FORWARD_AUDIT
+loaded_prior_team_count: 4
+new_main_table_team_count: 4
+old_zero_rows_removed_from_main_table_by_lifecycle_rule: none_new_today
+newly_zero_rows_retained_in_main_table_today: none
+active_positive_rows: France, Spain, England, Argentina
+archived_or_status_retained_zero_rows: Morocco, Belgium, Norway, Switzerland, Japan, Germany, Netherlands, Cote d Ivoire, Sweden, Ecuador, Congo DR, Bosnia and Herzegovina, Senegal, Croatia, Austria, Algeria, Australia, Ghana, Cabo Verde, Canada, Paraguay, Brazil, Mexico, Portugal, USA, Egypt, Colombia
+restfield_component_fill_applied: false_no_positive_restfield_residual
+restfield_residual_row: none_positive_residual_after_component_lift
+mandatory_sections_carried_forward: complete
+unaffected_team_rows_semantically_unchanged: true

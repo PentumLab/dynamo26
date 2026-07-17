@@ -42,9 +42,11 @@ Wahrscheinlichkeiten dürfen nur ausgegeben werden, wenn:
 - Audit bestanden wurde.
 
 RULE_04:
-T7 ist vollständig verboten.
-Externe Prognosen, Projektionen, Buchmacherquoten, Elo-/Ranking-Prognosen, FIFA-Ranking als Prognoseersatz oder Medien-Wahrscheinlichkeiten dürfen nicht gesucht, geladen, geöffnet, zitiert, gespeichert, zur Kalibrierung verwendet oder anderweitig verwertet werden.
-Wenn eine Websuche solche Treffer liefert, werden sie ignoriert und nicht geöffnet.
+T7 bleibt als Modellinput vollständig verboten.
+Externe Prognosen, Projektionen, Buchmacherquoten, Elo-/Ranking-Prognosen, FIFA-Ranking als Prognoseersatz oder Medien-Wahrscheinlichkeiten dürfen nicht gezielt gesucht, zitiert, gespeichert, zur Kalibrierung verwendet oder anderweitig als Modellinformation verwertet werden.
+Wenn eine Websuche solche Treffer liefert, werden sie ignoriert und nicht gezielt geöffnet.
+Wenn eine ansonsten zulässige T0-T6-Quelle zufällig einen T7-Abschnitt enthält, wird ausschließlich dieser T7-Teil als ignored_t7_segment dokumentiert und ignoriert. Die unabhängig belegten Nicht-T7-Fakten derselben Quelle dürfen weiter verwendet werden, sofern sie durch zulässige Quellenqualität und Audit gedeckt sind.
+Ein ignored_t7_segment darf keinen NOT_CURRENT-Status auslösen und keine Kausalkette, Indexwirkung, Wahrscheinlichkeit oder Output-Formulierung beeinflussen.
 Legacy-SRC_T7-Einträge aus älteren Prior-States dürfen nicht als aktive Quellen übernommen, aktualisiert oder ausgewertet werden.
 Falls sie zur Nachvollziehbarkeit erwähnt werden müssen, dann nur als ignorierte Legacy-Information ohne Modellwirkung.
 
@@ -587,7 +589,8 @@ function FETCH_CURRENT_SOURCES(source_plan):
     - T4 context data abrufen
     - T5 reputable news abrufen
     - T6 nur als Warnsignal prüfen
-    - T7 nicht suchen, nicht laden, nicht öffnen und nicht verwenden
+    - T7 nicht gezielt suchen, zitieren, speichern, kalibrieren oder verwenden
+    - zufällige T7-Abschnitte in ansonsten zulässigen Quellen als ignored_t7_segment dokumentieren und aus allen Fakten-/Signal-/Modellfeldern ausschließen
   returns:
     SourceRun
 
@@ -742,7 +745,8 @@ function EXTRACT_EVENT_SIGNALS(classified_sources, entities, prior_state):
     - nur Quellen nach prior_state.created_at_run_date als neue Events behandeln
     - Quelle -> Tier -> Datum -> Event -> Entität -> Signaltyp -> Indexwirkung erzeugen
     - Social-only-Signale begrenzen
-    - T7 vollständig ausschließen; keine calibration_only-Ausnahme
+    - T7 vollständig aus Event-Signalen ausschließen; keine calibration_only-Ausnahme
+    - ignored_t7_segment darf kein EventSignal erzeugen
     - fehlende Premiumdaten als uncertainty_flag markieren
   returns:
     list of EventSignal
@@ -840,7 +844,8 @@ function FETCH_PRE_MATCH_SOURCES(pre_match_source_plan):
     - Such-Snippets nicht als Fakten übernehmen; verwendete Aussagen in der Quelle öffnen und verifizieren
     - Quellen eindeutig match_id und Themenbereich zuordnen
     - T6 nur als warning_only behandeln
-    - T7 nicht suchen, öffnen oder verwenden
+    - T7 nicht gezielt suchen, öffnen oder verwenden
+    - zufällige T7-Abschnitte in sonst zulässigen Pre-Match-Quellen als ignored_t7_segment dokumentieren und nicht in Dossier-Fakten, Ketten oder Effekte übernehmen
   returns:
     SourceRun
 
@@ -1010,7 +1015,8 @@ function AUDIT_MODEL(context, source_run, source_quality, bias_result, signals, 
     - no_impossible_final_between_same_half_teams
     - title_probability_global_sum_100_without_half_side_balancing
     - t7_external_forecasts_blocked
-    - no_t7_sources_loaded_or_used
+    - no_t7_sources_used
+    - incidental_t7_segments_ignored_without_model_effect
     - social_media_sets_no_fact
     - every_output_has_causal_chain
     - confidence_not_above_data_quality
@@ -1217,7 +1223,7 @@ function EXPORT_ARTIFACTS(...):
       line 1: DYNAMO26 changes - YYYY-MM-DD
       line 2: Status: CURRENT|DEGRADED. New verified matches after prior cutoff: N.
       following lines: Team: +x.x pp to y.y%. Short English causal reason.
-      final line: Other small changes are normalization/path effects from the verified results. T6 warning scan set no fact. T7 was not searched, opened or used.
+      final line: Other small changes are normalization/path effects from the verified results. T6 warning scan set no fact. T7 was not searched or used; any incidental T7 segment was ignored with no model effect.
     - every material model movement must have its own Team line with delta, target probability and causal reason
     - do not put all changes into line 1 or line 2; those lines are metadata/control
   returns:

@@ -1,0 +1,531 @@
+DYNAMO-26 PRIOR_STATE_FILE
+file_version: pipeline_v1.0
+created_for_next_run: true
+created_at_run_date: 2026-07-09
+created_at_berlin: 2026-07-09T14:13:43.3704136+02:00
+created_at_utc: 2026-07-09T12:13:43.3763044+00:00
+model_name: DYNAMO26 3.0
+model_version: pipeline_v1.0
+language: de
+intended_use: prior_state_input_for_next_DYNAMO_26_pipeline_run
+
+IMPORTANT_PROCESSING_INSTRUCTIONS_FOR_NEXT_STATE_MACHINE_RUN
+Diese Datei ist PRIOR_STATE, keine aktuelle Quelle. Der naechste Lauf muss FETCH_CURRENT_SOURCES neu ausfuehren. T7 ist vollstaendig verboten. Social Media ohne Bestaetigung setzt keinen Fakt.
+
+RUN_METADATA
+run_id: 20260709T115051Z
+run_date: 2026-07-09
+run_mode: DAILY_CURRENT_UPDATE
+run_result_type: CURRENT_WITH_NO_NEW_MODEL_EVENTS
+output_status: CURRENT
+confidence_level: MEDIUM
+source_quality_score: 91
+probability_sum: 100.0
+final_probability_sum: 200.0
+semi_final_probability_sum: 400.0
+quarter_final_probability_sum: 800.0
+probability_simulation_method: exact_path_enumeration_fixed_knockout_tree
+probability_simulation_seed: deterministic_no_random_draw
+probability_simulation_iterations: exact
+prior_loaded_from_this_run: website/wm26/runs/dynamo26_prior_state_2026-07-08_pipeline_v1_0.txt
+prior_cutoff_utc: 2026-07-08T09:37:04Z
+sort_rule: title_probability_percent descending; ranks recalculated gapless 1..8
+
+SEARCH_QUERIES_USED
+- FIFA World Cup 2026 July 8 July 9 2026 results quarter-finals official schedule
+- site:fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026 July 9 2026 quarter-final schedule results
+- World Cup 2026 completed matches July 8 2026 results quarter-final bracket
+- FIFA World Cup 2026 bracket correction disciplinary decision July 9 2026
+- France Morocco quarter-final July 9 2026 team news injuries training press conference lineup referee Boston
+- France Maroc quart de finale 9 juillet 2026 blessures entrainement conference de presse composition
+- site:fff.fr France Maroc 9 juillet 2026 entrainement conference de presse Coupe du monde
+- site:frmf.ma France Maroc 9 juillet 2026 entrainement conference de presse Coupe du monde
+- Boston Foxborough weather July 9 2026 4 pm forecast National Weather Service
+- Spain Belgium quarter-final July 10 2026 team news injuries training press conference lineup referee Los Angeles
+- Espana Belgica cuartos 10 julio 2026 lesiones entrenamiento rueda de prensa alineacion
+- site:rfef.es Espana Belgica 10 julio 2026 entrenamiento rueda de prensa Mundial
+- site:rbfa.be Belgium Spain 10 July 2026 training press conference World Cup
+- Belgium Spain July 10 2026 Amadou Onana injury Debast training Courtois press conference
+- Los Angeles weather July 10 2026 noon National Weather Service Inglewood
+- Norway England quarter-final July 11 2026 team news injuries training press conference lineup referee Miami
+- Norge England kvartfinale 11 juli 2026 skader trening pressekonferanse lagoppstilling
+- site:fotball.no Norge England 11 juli 2026 VM trening pressekonferanse
+- site:englandfootball.com England Norway 11 July 2026 training press conference World Cup
+- Argentina Switzerland quarter-final July 11 2026 team news injuries training press conference lineup referee Kansas City
+- Argentina Suiza cuartos 11 julio 2026 lesiones entrenamiento conferencia prensa alineacion arbitro Kansas City
+- site:afa.com.ar Argentina Suiza 11 julio 2026 entrenamiento conferencia prensa Mundial
+- site:football.ch Schweiz Argentinien 11 Juli 2026 Training Pressekonferenz WM
+- Schweiz Argentinien Viertelfinal 11 Juli 2026 Manzambi Vargas Sow Training Update
+- Kansas City weather July 11 2026 8 pm National Weather Service
+- World Cup 2026 quarter-finals social media injury suspension warning July 9 2026 France Morocco Spain Belgium Norway England Argentina Switzerland
+- France Morocco referee social media controversy July 9 2026 Facundo Tello
+
+CURRENT_SOURCE_EVENTS_USED
+- SRC_T0_FIFA_SCHEDULE_20260709 | T0 | checked=2026-07-09 | FIFA schedule/results page checked for the current tournament core and quarter-final continuity. | url=https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/match-schedule-fixtures-results-teams-stadiums | usage=data/control
+- SRC_T0_UEFA_FIXTURES_20260709 | T0/T1 | checked=2026-07-09 | UEFA fixture list confirms all four quarter-final pairings, dates, venues and CEST kick-off times. | url=https://www.uefa.com/european-qualifiers/news/02a6-20c3aa0fafe2-4a6b4459a3fc-1000--2026-world-cup-all-the-european-/ | usage=data/control
+- SRC_T1_FFF_DAILY_20260709 | T1/T4 | checked=2026-07-09 | FFF confirms France-Morocco timing, Facundo Tello, France training, Tchouameni's partial return and benign match-time weather. | url=https://www.fff.fr/article/16903-les-bleus-au-jour-le-jour.html | usage=data/context
+- SRC_T5_LEQUIPE_FRANCE_LINEUP_20260709 | T5/T3 | checked=2026-07-09 | Current France report says Tchouameni trained partly but is not expected to start; Doue is expected on the left. | url=https://www.lequipe.fr/Football/Actualites/La-composition-probable-des-bleus-avec-desire-doue-d-entree-face-au-maroc/1702773 | usage=data/context
+- SRC_T5_LEPARISIEN_MOROCCO_20260709 | T5/T1/T3 | checked=2026-07-09 | Morocco report confirms Saibari out, Riad back in group, and provides the current expected XI. | url=https://www.leparisien.fr/sports/football/coupe-du-monde/coupe-du-monde-2026-saibari-forfait-mais-riad-postule-la-composition-probable-du-maroc-lors-du-quart-de-finale-face-a-la-france-09-07-2026-3AS3JCGHIFHE7LSZBS7JN3KQCA.php | usage=data/context
+- SRC_T1_RFEF_TRAVEL_20260709 | T1/T4 | checked=2026-07-09 | RFEF confirms Spain's Los Angeles return, recovery session, training base, moderate conditions and kick-off. | url=https://rfef.es/en/noticias/Spain-Always-Wanted-to-Return-to-LA | usage=data/context
+- SRC_T5_MUNDO_SPAIN_TRAINING_20260709 | T5/T1 | checked=2026-07-09 | Spain trained with all 26 players; Cubarsi and Laporte returned to full group work. | url=https://www.mundodeportivo.com/seleccion-espanola/20260708/1004204468/cubarsi-laporte-regresan-grupo-centrados-belgica.html | usage=data/context
+- SRC_T5_AP_BELGIUM_20260709 | T5/T3 | checked=2026-07-09 | AP documents Belgium's 4-1 win, high press and transition/diagonal mechanisms against the USA. | url=https://apnews.com/article/world-cup-united-states-belgium-score-0325e8102be7a88e852079deffd70ca0 | usage=data/context
+- SRC_T5_LEQUIPE_ONANA_20260709 | T5/T1 | checked=2026-07-09 | Belgium medical communication confirms Amadou Onana's ACL rupture and quarter-final absence. | url=https://www.lequipe.fr/Football/Actualites/La-belgique-annonce-une-rupture-du-ligament-croise-anterieur-pour-amadou-onana-touche-contre-les-etats-unis-en-coupe-du-monde/1702402 | usage=data/context
+- SRC_T1_FA_REFEREE_20260709 | T1/T0 | checked=2026-07-09 | England Football confirms Michael Oliver and assistants for Spain-Belgium. | url=https://www.englandfootball.com/articles/2026/Jul/08/Michael-Oliver-appointed-to-fifa-world-cup-2026-quarter-final-20260807 | usage=data/control
+- SRC_T1_NFF_MATCH_20260709 | T1/T0 | checked=2026-07-09 | NFF confirms Norway-England at Miami Stadium on 11 July at 17:00 local. | url=https://www.fotball.no/Mesterskap | usage=data/control
+- SRC_T1_FA_TRAINING_20260709 | T1 | checked=2026-07-09 | England training update confirms individual programmes for Guehi, James and Rice and Henderson's post-surgery recovery. | url=https://www.englandfootball.com/articles/2026/Jul/08/england-train-world-cup-quarter-final-norway-20260807 | usage=data/context
+- SRC_T5_LOCAL10_NORWAY_20260709 | T5/T1/T4 | checked=2026-07-09 | Local report confirms Norway training in Fort Lauderdale, Strand Larsen recovering from cough/fever, and heat acclimatisation concern. | url=https://www.local10.com/sports/2026/07/08/fifa-world-cup-2026-norway-practices-in-fort-lauderdale-ahead-of-miami-stadium-match-against-england/ | usage=data/context
+- SRC_T5_SKY_ENGLAND_20260709 | T5/T1 | checked=2026-07-09 | Sky reports James remains touch-and-go, Quansah suspended and Henderson out. | url=https://www.skysports.com/football/news/11095/13561150/england-world-cup-latest-reece-james-in-race-to-be-fit-for-quarter-final-clash-with-norway-to-ease-right-back-crisis | usage=data/context
+- SRC_T1_AFA_QF_20260709 | T1/T0 | checked=2026-07-09 | AFA confirms Argentina-Switzerland at Kansas City Stadium and the fixed route. | url=https://www.afa.com.ar/es/posts/argentina-ya-tiene-rival-enfrentara-a-suiza-en-los-cuartos-de-final-que-elimino-a-colombia-en-la-tanda-de-penales-4-3 | usage=data/control
+- SRC_T5_TN_ARGENTINA_20260709 | T5/T1/T3 | checked=2026-07-09 | Argentina recovery report records no new injury after Egypt, high workloads and open selection decisions. | url=https://tn.com.ar/deportes/futbol/2026/07/08/la-seleccion-se-entrenara-esta-tarde-con-la-mira-en-suiza-los-jugadores-con-molestias-fisicas-y-las-dudas-de-scaloni/?outputType=amp | usage=data/context
+- SRC_T5_SRF_SWISS_20260709 | T5/T3 | checked=2026-07-09 | SRF quarter-final coverage confirms Switzerland's route; Manzambi's current quarter-final status remains unconfirmed. | url=https://www.srf.ch/sport/fussball/fifa-wm-2026 | usage=data/context
+- SRC_T6_PUBLIC_SOCIAL_SCAN_20260709 | T6 | checked=2026-07-09 | Public social-media warning scan surfaced referee-bias accusations around France-Morocco; they remain unverified and set no fact. | url=https://www.lemonde.fr/en/sports/article/2026/07/08/2026-world-cup-recent-fifa-decisions-ramp-up-pressure-on-referees_6755285_9.html | usage=warning_only
+
+SOURCE_LIMITATION_NOTE
+- Search snippets alone set no fact.
+- FIFA official core and federation/UEFA fixture pages were checked for tournament continuity and correction scan.
+- Unsolicited forbidden forecast/odds/ranking-projection search results were ignored and not opened, cited, stored or used.
+- Social posts were not opened and did not set facts.
+- T7 forecasts/projections/bookmaker odds/Elo/ranking probabilities were not searched, opened, cited or used for calibration.
+
+NEW_MATCH_COMPLETENESS_GATE
+prior_cutoff_utc: 2026-07-08T09:37:04Z
+control_list_count: 0
+completed_matches_after_prior_cutoff: none
+open_quarter_finals_at_audit_time: France-Morocco; Spain-Belgium; Norway-England; Argentina-Switzerland
+new_matches_complete: true
+
+GROUP_STAGE_FINAL_QUALIFICATION_GATE
+group_stage_finished_official_core: true
+prior_state_had_group_stage_final_qualification_gate_passed: true
+prior_state_had_complete_knockout_bracket_state: true
+gate_executed_this_run: false
+gate_reused_from_prior_state: true
+official_correction_scan_completed: true
+official_correction_or_bracket_change_found: false
+group_stage_final_qualification_gate_passed: true
+group_stage_final_qualification_gate_checked_at: 2026-07-09T14:13:43.3704136+02:00
+qualified_teams: Mexico, USA, Germany, Argentina, France, Norway, Colombia, Switzerland, Canada, Brazil, Morocco, Bosnia and Herzegovina, South Africa, Cote d Ivoire, Ecuador, Netherlands, Japan, Sweden, Australia, Spain, Cabo Verde, Paraguay, Belgium, Egypt, Senegal, England, Croatia, Ghana, Portugal, Congo DR, Austria, Algeria
+best_third_placed_teams: Bosnia and Herzegovina, Ecuador, Sweden, Paraguay, Senegal, Ghana, Congo DR, Algeria
+eliminated_teams: Haiti, Tunisia, Turkiye, Jordan, Panama, Qatar, Czechia, Curacao, Iraq, Uruguay, Saudi Arabia, New Zealand, Scotland, Uzbekistan, Korea Republic, IR Iran
+knockout_eliminated_teams_after_prior_cutoff: Japan, Germany, Netherlands, Cote d Ivoire, Sweden, Ecuador, Congo DR, Bosnia and Herzegovina, Senegal, Croatia, Austria, Algeria, Australia, Ghana, Cabo Verde, Canada, Paraguay, Brazil, Mexico, Portugal, USA, Egypt, Colombia
+qualification_gate_reopen_only_on_official_correction: true
+
+KNOCKOUT_BRACKET_STATE
+current_stage: quarter_final
+bracket_locked: true
+checked_at: 2026-07-09T14:13:43.3704136+02:00
+display_intermediate_probability: semi_final_probability
+reopen_only_on_official_correction: true
+sources:
+  - SRC_T0_FIFA_SCHEDULE_20260709
+  - SRC_T0_UEFA_FIXTURES_20260709
+rounds:
+  - match_id: QF_1
+    round: quarter_final
+    slot: upper_sf1_a
+    team_a: France
+    team_b: Morocco
+    status: scheduled
+    score: null
+    winner: null
+    winner_to: SF_1
+    loser_eliminated: false
+    half: upper
+    quarter: q1
+    sources: [SRC_T0_UEFA_FIXTURES_20260709]
+  - match_id: QF_2
+    round: quarter_final
+    slot: upper_sf1_b
+    team_a: Spain
+    team_b: Belgium
+    status: scheduled
+    score: null
+    winner: null
+    winner_to: SF_1
+    loser_eliminated: false
+    half: upper
+    quarter: q2
+    sources: [SRC_T0_UEFA_FIXTURES_20260709]
+  - match_id: QF_3
+    round: quarter_final
+    slot: lower_sf2_a
+    team_a: Norway
+    team_b: England
+    status: scheduled
+    score: null
+    winner: null
+    winner_to: SF_2
+    loser_eliminated: false
+    half: lower
+    quarter: q3
+    sources: [SRC_T0_UEFA_FIXTURES_20260709]
+  - match_id: QF_4
+    round: quarter_final
+    slot: lower_sf2_b
+    team_a: Argentina
+    team_b: Switzerland
+    status: scheduled
+    score: null
+    winner: null
+    winner_to: SF_2
+    loser_eliminated: false
+    half: lower
+    quarter: q4
+    sources: [SRC_T0_UEFA_FIXTURES_20260709]
+  - match_id: SF_1
+    round: semi_final
+    slot: final_a
+    team_a: winner:QF_1
+    team_b: winner:QF_2
+    status: scheduled
+    score: null
+    winner: null
+    winner_to: FINAL
+    loser_eliminated: false
+    half: upper
+    quarter: null
+    sources: [SRC_T0_UEFA_FIXTURES_20260709]
+  - match_id: SF_2
+    round: semi_final
+    slot: final_b
+    team_a: winner:QF_3
+    team_b: winner:QF_4
+    status: scheduled
+    score: null
+    winner: null
+    winner_to: FINAL
+    loser_eliminated: false
+    half: lower
+    quarter: null
+    sources: [SRC_T0_UEFA_FIXTURES_20260709]
+  - match_id: FINAL
+    round: final
+    slot: title
+    team_a: winner:SF_1
+    team_b: winner:SF_2
+    status: scheduled
+    score: null
+    winner: null
+    winner_to: CHAMPION
+    loser_eliminated: false
+    half: final
+    quarter: null
+    sources: [SRC_T0_UEFA_FIXTURES_20260709]
+team_bracket_positions:
+  - team: France
+    status: live
+    half: upper
+    quarter: q1
+    slot: QF_1_a
+    current_match_id: QF_1
+    possible_next_match_id: SF_1
+  - team: Morocco
+    status: live
+    half: upper
+    quarter: q1
+    slot: QF_1_b
+    current_match_id: QF_1
+    possible_next_match_id: SF_1
+  - team: Spain
+    status: live
+    half: upper
+    quarter: q2
+    slot: QF_2_a
+    current_match_id: QF_2
+    possible_next_match_id: SF_1
+  - team: Belgium
+    status: live
+    half: upper
+    quarter: q2
+    slot: QF_2_b
+    current_match_id: QF_2
+    possible_next_match_id: SF_1
+  - team: Norway
+    status: live
+    half: lower
+    quarter: q3
+    slot: QF_3_a
+    current_match_id: QF_3
+    possible_next_match_id: SF_2
+  - team: England
+    status: live
+    half: lower
+    quarter: q3
+    slot: QF_3_b
+    current_match_id: QF_3
+    possible_next_match_id: SF_2
+  - team: Argentina
+    status: live
+    half: lower
+    quarter: q4
+    slot: QF_4_a
+    current_match_id: QF_4
+    possible_next_match_id: SF_2
+  - team: Switzerland
+    status: live
+    half: lower
+    quarter: q4
+    slot: QF_4_b
+    current_match_id: QF_4
+    possible_next_match_id: SF_2
+
+NEW_EVENT_CHAINS_AFTER_PRIOR_STATE
+- No completed match after the exact prior cutoff; no bracket or permanent team-state update.
+- France-Morocco availability chain: current FFF/L'Equipe/Le Parisien evidence -> Tchouameni not expected to start and Saibari out -> opposing matchup context -> damped net effect 0.0.
+- Other pre-match information was pre-cutoff, incomplete, or non-directional -> no synthetic delta.
+
+SOURCE_QUALITY_STATE
+source_run_completed: true
+current_sources_fetched: true
+T0_core_checked: true
+T1_team_checked: true_official_federation_and_current_team_reporting
+T3_public_data_checked: true
+T4_context_checked: true
+T5_news_checked: true
+T6_social_checked: true_warning_only
+T7_calibration_checked: false_forbidden
+t7_external_forecasts_blocked: true
+no_t7_sources_loaded_or_used: true
+credibility_score: 93
+freshness_score: 96
+independence_score: 89
+specificity_score: 92
+actionability_score: 85
+source_quality_score: 91
+unresolved_blocking_conflicts: none
+missing_critical_data: none
+
+BIAS_FLAGS
+recency_bias: controlled by strict cutoff and no synthetic deltas.
+star_bias: visible for Messi/Argentina coverage; controlled by defensive-volatility offset.
+market_bias: blocked; no T7 model source.
+social_hype_bias: blocked; T6 sets no fact.
+injury_rumor_bias: controlled; confirmed absences are separated from open availability and expected lineups.
+english_language_bias: controlled with French, Spanish, Norwegian and German-language searches.
+regional_undercoverage: partly open for Swiss and Belgian official team detail.
+closed_data_bias: visible non-blocking.
+
+NON_BLOCKING_DATA_GAPS
+- Full premium/xG/pressing/set-piece/training-load data missing but non-blocking.
+- Exact hourly weather was not verifiable for Los Angeles, Miami and Kansas City; all are explicit dossier gaps with zero model effect.
+- Referee appointments for Norway-England and Argentina-Switzerland were not confirmed in opened sources at audit time.
+
+TITLE_PROBABILITY_PRIOR_TABLE
+rank,team,title_probability_percent,final_probability_percent,semi_final_probability_percent,quarter_final_probability_percent,early_exit_probability_percent,crash_risk_score,main_positive_driver,main_negative_risk,confidence
+1,France,22.7,37.8,68.0,100.0,32.0,25.0,Quarter-final access remains locked and the upper-half route still gives France the strongest combined control profile.,Morocco first and then the Spain-Belgium branch keep the ceiling below the prior run.,MEDIUM
+2,Spain,18.4,37.2,68.0,100.0,32.0,27.0,The Belgium quarter-final remains a locked route with high control upside from the prior Portugal win.,Belgium's transition and finishing profile keeps the quarter-final cap material.,MEDIUM
+3,England,17.4,41.7,70.0,100.0,30.0,48.0,England keeps the strongest lower-half quarter-final win share against Norway.,The now-locked Argentina-Switzerland branch increases the lower-half collision risk after the quarter-final.,MEDIUM
+4,Argentina,15.8,33.1,67.0,100.0,33.0,51.0,Verified 3-2 comeback over Egypt closes the last R16 risk and adds a high-resilience late-game signal.,"The two-goal deficit, saved penalty and controversy keep structural volatility visible.",MEDIUM
+5,Norway,7.4,12.6,30.0,100.0,70.0,40.0,Quarter-final access remains locked and the England match still leaves a live upset path.,England's branch strength and the fully resolved Argentina-Switzerland path reduce residual upside.,MEDIUM
+6,Belgium,6.8,13.9,32.0,100.0,68.0,42.0,Belgium remains live after the verified USA win and has a clear Spain quarter-final path.,Spain's control profile keeps the quarter-final and final-route ceiling low.,MEDIUM
+7,Switzerland,6.3,12.6,33.0,100.0,67.0,46.0,Verified penalty-shootout win over Colombia closes R16 risk and locks the Argentina quarter-final.,A low-chance 0-0 plus Manzambi availability concern cap the jump.,LOW_MEDIUM
+8,Morocco,5.2,11.1,32.0,100.0,68.0,39.0,Quarter-final access remains locked and Morocco still carries a live France-upset path.,France remains the strongest immediate barrier in the upper half.,MEDIUM
+
+INDEX_PRIOR_TABLE
+team,affected_indices,direction,D_prior,D_current,mechanism
+All live teams,SCI/TBI/CSI/AMCI/SAI/FQ,unchanged,prior value,prior value,No complete post-cutoff event chain supports a permanent team-index update.
+All four quarter-finals,MatchupContext,zero,0.0,0.0,Opposing or incomplete short-term context is strongly damped to zero without double counting.
+
+CRASH_RISK_PRIOR_TABLE
+France,25.0,Morocco first and then the Spain-Belgium branch keep the ceiling below the prior run.
+Spain,27.0,Belgium's transition and finishing profile keeps the quarter-final cap material.
+England,48.0,The now-locked Argentina-Switzerland branch increases the lower-half collision risk after the quarter-final.
+Argentina,51.0,The two-goal deficit, saved penalty and controversy keep structural volatility visible.
+Norway,40.0,England's branch strength and the fully resolved Argentina-Switzerland path reduce residual upside.
+Belgium,42.0,Spain's control profile keeps the quarter-final and final-route ceiling low.
+Switzerland,46.0,A low-chance 0-0 plus Manzambi availability concern cap the jump.
+Morocco,39.0,France remains the strongest immediate barrier in the upper half.
+Egypt,100.0,Title path closed.
+Colombia,100.0,Title path closed.
+
+CAUSAL_CHAINS_CURRENT
+- No new final score -> bracket unchanged -> all title and round probabilities unchanged.
+- Saibari confirmed out plus Tchouameni not expected to start -> opposing France-Morocco availability context -> damped net effect 0.0.
+- Pre-cutoff or incomplete availability, referee and weather information -> no valid new-event chain -> no probability delta.
+
+PRE_MATCH_DOSSIERS
+  - match_id: QF_1
+    competition_stage: quarter_final
+    teams: France – Morocco
+    kickoff_at: 2026-07-09T16:00:00-04:00 / 22:00 CEST
+    venue: Boston Stadium, Foxborough
+    referee_status: Facundo Tello (confirmed); no referee-style model effect.
+    availability: France: Tchouaméni returned to partial training but is not expected to start. Morocco: Saibari is confirmed out; Riad returned to group work, starting status unconfirmed.
+    expected_lineups: France expected close to the Paraguay XI with Doué on the left; Morocco expected Bounou; Hakimi, Diop, Riad/Halhal, Mazraoui; Bouaddi, El Aynaoui; Díaz, Ounahi, El Khannouss; Rahimi. Neither XI is official before release.
+    team_environment: Both camps publicly frame the match as high stakes. Single motivational statements and online referee claims are not treated as model facts.
+    playing_style_and_tactical_interactions: France can create wide isolations through Mbappé/Olise/Dembélé/Doué; Morocco's compact block and fast Hakimi/Díaz transitions target space behind advanced full-backs. Saibari's absence reduces Morocco's central/forward continuity, while France's Tchouaméni uncertainty reduces midfield control depth.
+    rest_and_travel_context: France returned to its Boston base after Philadelphia; Morocco prepared in Boston. Both last played on 4 July, so neither has a material rest-day edge.
+    weather_at_kickoff: FFF reports sun and no heat-wave concern at kick-off; exact hourly meteorological values were not independently extractable.
+    group_scenario_relevance: not_applicable_knockout
+    evidence_by_topic:
+      T0: [SRC_T0_UEFA_FIXTURES_20260709]
+      T1: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_FFF_DAILY_20260709, SRC_T5_LEQUIPE_FRANCE_LINEUP_20260709, SRC_T5_LEPARISIEN_MOROCCO_20260709, SRC_T6_PUBLIC_SOCIAL_SCAN_20260709]
+      T3: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_FFF_DAILY_20260709, SRC_T5_LEQUIPE_FRANCE_LINEUP_20260709, SRC_T5_LEPARISIEN_MOROCCO_20260709, SRC_T6_PUBLIC_SOCIAL_SCAN_20260709]
+      T4: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_FFF_DAILY_20260709, SRC_T5_LEQUIPE_FRANCE_LINEUP_20260709, SRC_T5_LEPARISIEN_MOROCCO_20260709, SRC_T6_PUBLIC_SOCIAL_SCAN_20260709]
+      T5: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_FFF_DAILY_20260709, SRC_T5_LEQUIPE_FRANCE_LINEUP_20260709, SRC_T5_LEPARISIEN_MOROCCO_20260709, SRC_T6_PUBLIC_SOCIAL_SCAN_20260709]
+    source_ids: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_FFF_DAILY_20260709, SRC_T5_LEQUIPE_FRANCE_LINEUP_20260709, SRC_T5_LEPARISIEN_MOROCCO_20260709, SRC_T6_PUBLIC_SOCIAL_SCAN_20260709]
+    checked_at: 2026-07-09T13:50:51+02:00
+    freshness: current_with_documented_gaps
+    confidence: MEDIUM
+    information_gaps: Official starting XIs remain unknown until release. No verified granular pressing/set-piece dataset. Weather values beyond the federation description remain unknown.
+    raw_context_direction: balanced: Morocco Saibari absence offsets France Tchouaméni non-start uncertainty
+    damped_context_effect: 0.0
+    model_effect_allowed: true_but_net_zero
+    model_effect_reason: Post-cutoff availability chain exists, but opposing effects and uncertainty do not justify a non-zero shift.
+    post_prior_context_event_chain: source -> tier -> publication/check after prior cutoff where applicable -> named matchup -> availability/context -> zero net effect
+  - match_id: QF_2
+    competition_stage: quarter_final
+    teams: Spain – Belgium
+    kickoff_at: 2026-07-10T12:00:00-07:00 / 21:00 CEST
+    venue: Los Angeles Stadium, Inglewood
+    referee_status: Michael Oliver (confirmed); no referee-style model effect.
+    availability: Spain trained with all 26 players; Cubarsí and Laporte returned fully. Belgium: Amadou Onana is out with a confirmed ACL rupture; the injury was known before this run's prior cutoff.
+    expected_lineups: Spain's exact XI remains unconfirmed. Belgium's De Bruyne/Doku starting roles and Onana replacement remain unconfirmed; no projected XI is promoted to fact.
+    team_environment: Spain returned to familiar Los Angeles facilities. Belgium arrive after a 4-1 win and have publicly emphasised full concentration rather than one-player marking.
+    playing_style_and_tactical_interactions: Spain's possession and counterpress can pin Belgium back; Belgium's direct diagonals, early press and runs behind Spain's advanced line are the clearest counter-mechanism. Onana's absence affects midfield ball-winning, but it predates the cutoff and cannot create today's delta.
+    rest_and_travel_context: Both played on 6 July. Spain flew Dallas–Los Angeles after recovery work; Belgium travelled Seattle–Los Angeles. Rest is broadly equal.
+    weather_at_kickoff: RFEF describes Los Angeles conditions as moderate despite summer heat; an exact kick-off forecast was not verified.
+    group_scenario_relevance: not_applicable_knockout
+    evidence_by_topic:
+      T0: [SRC_T0_UEFA_FIXTURES_20260709]
+      T1: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_RFEF_TRAVEL_20260709, SRC_T5_MUNDO_SPAIN_TRAINING_20260709, SRC_T5_AP_BELGIUM_20260709, SRC_T5_LEQUIPE_ONANA_20260709, SRC_T1_FA_REFEREE_20260709]
+      T3: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_RFEF_TRAVEL_20260709, SRC_T5_MUNDO_SPAIN_TRAINING_20260709, SRC_T5_AP_BELGIUM_20260709, SRC_T5_LEQUIPE_ONANA_20260709, SRC_T1_FA_REFEREE_20260709]
+      T4: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_RFEF_TRAVEL_20260709, SRC_T5_MUNDO_SPAIN_TRAINING_20260709, SRC_T5_AP_BELGIUM_20260709, SRC_T5_LEQUIPE_ONANA_20260709, SRC_T1_FA_REFEREE_20260709]
+      T5: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_RFEF_TRAVEL_20260709, SRC_T5_MUNDO_SPAIN_TRAINING_20260709, SRC_T5_AP_BELGIUM_20260709, SRC_T5_LEQUIPE_ONANA_20260709, SRC_T1_FA_REFEREE_20260709]
+    source_ids: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_RFEF_TRAVEL_20260709, SRC_T5_MUNDO_SPAIN_TRAINING_20260709, SRC_T5_AP_BELGIUM_20260709, SRC_T5_LEQUIPE_ONANA_20260709, SRC_T1_FA_REFEREE_20260709]
+    checked_at: 2026-07-09T13:50:51+02:00
+    freshness: current_with_documented_gaps
+    confidence: MEDIUM
+    information_gaps: Official starting XIs and Belgium's final midfield structure unknown. Exact hourly weather and any late suspension update unknown.
+    raw_context_direction: Spain positive, but based mainly on a pre-cutoff Belgium absence
+    damped_context_effect: 0.0
+    model_effect_allowed: false
+    model_effect_reason: No complete post-prior context chain supports a new probability delta.
+    post_prior_context_event_chain: source -> tier -> publication/check after prior cutoff where applicable -> named matchup -> availability/context -> zero net effect
+  - match_id: QF_3
+    competition_stage: quarter_final
+    teams: Norway – England
+    kickoff_at: 2026-07-11T17:00:00-04:00 / 23:00 CEST
+    venue: Miami Stadium, Miami Gardens
+    referee_status: Not confirmed in opened sources at audit time; effect fixed at zero.
+    availability: Norway: Strand Larsen was recovering from cough/fever; coach said the squad was otherwise ready. England: Guehi, James and Rice worked individually; Henderson is out after arm surgery; Quansah is suspended.
+    expected_lineups: Both starting XIs remain unconfirmed. Norway's Haaland/Ødegaard axis and England's Kane/Bellingham core are established style context, not new lineup facts.
+    team_environment: Norway acknowledged unfamiliar Florida conditions. England's camp reports strong togetherness after playing with ten men against Mexico; mood statements receive no standalone model weight.
+    playing_style_and_tactical_interactions: Norway can attack early and directly through Haaland with Ødegaard supplying; England can control territory but must protect the right side and second balls. England's provisional defensive absences are not yet a confirmed final XI mechanism.
+    rest_and_travel_context: Both last played on 5 July. Norway acclimatised in Fort Lauderdale; England trained in Kansas City before travel, giving Norway more local climate exposure but no quantified model edge.
+    weather_at_kickoff: Hot/humid adaptation is a documented concern for Norway; exact kick-off forecast was not verified and is explicitly unknown.
+    group_scenario_relevance: not_applicable_knockout
+    evidence_by_topic:
+      T0: [SRC_T0_UEFA_FIXTURES_20260709]
+      T1: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_NFF_MATCH_20260709, SRC_T1_FA_TRAINING_20260709, SRC_T5_LOCAL10_NORWAY_20260709, SRC_T5_SKY_ENGLAND_20260709]
+      T3: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_NFF_MATCH_20260709, SRC_T1_FA_TRAINING_20260709, SRC_T5_LOCAL10_NORWAY_20260709, SRC_T5_SKY_ENGLAND_20260709]
+      T4: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_NFF_MATCH_20260709, SRC_T1_FA_TRAINING_20260709, SRC_T5_LOCAL10_NORWAY_20260709, SRC_T5_SKY_ENGLAND_20260709]
+      T5: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_NFF_MATCH_20260709, SRC_T1_FA_TRAINING_20260709, SRC_T5_LOCAL10_NORWAY_20260709, SRC_T5_SKY_ENGLAND_20260709]
+    source_ids: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_NFF_MATCH_20260709, SRC_T1_FA_TRAINING_20260709, SRC_T5_LOCAL10_NORWAY_20260709, SRC_T5_SKY_ENGLAND_20260709]
+    checked_at: 2026-07-09T13:50:51+02:00
+    freshness: current_with_documented_gaps
+    confidence: MEDIUM
+    information_gaps: Referee, official XIs, final England availability and exact hourly weather unknown.
+    raw_context_direction: mixed and incomplete
+    damped_context_effect: 0.0
+    model_effect_allowed: false
+    model_effect_reason: Final availability and referee chains are incomplete; weather/rest context is not directional enough.
+    post_prior_context_event_chain: source -> tier -> publication/check after prior cutoff where applicable -> named matchup -> availability/context -> zero net effect
+  - match_id: QF_4
+    competition_stage: quarter_final
+    teams: Argentina – Switzerland
+    kickoff_at: 2026-07-11T20:00:00-05:00 / 2026-07-12 03:00 CEST
+    venue: Kansas City Stadium
+    referee_status: Not confirmed in opened sources at audit time; effect fixed at zero.
+    availability: Argentina reported no new injury after Egypt, with recovery loads managed. Switzerland's Manzambi status for the quarter-final remains unconfirmed after missing the Round of 16; Vargas and Sow played against Colombia.
+    expected_lineups: Argentina are considering Molina/Montiel and Álvarez/Lautaro choices; Switzerland's official XI is unknown.
+    team_environment: Argentina remain at their Kansas City base after an emotionally and physically demanding comeback. Switzerland arrive after 120 minutes and penalties; neither narrative alone sets a probability fact.
+    playing_style_and_tactical_interactions: Argentina must improve protection against transitions and solve a compact Swiss block. Switzerland can defend deep, use Xhaka-led progression and attack space through Vargas/Ndoye, but chance creation was limited against Colombia.
+    rest_and_travel_context: Argentina returned directly to its Kansas City base; Switzerland travel from Vancouver after playing later on 7 July. Argentina have a logistical advantage, but its size is not independently quantified.
+    weather_at_kickoff: Exact Kansas City kick-off weather was not verified; no weather model effect applied.
+    group_scenario_relevance: not_applicable_knockout
+    evidence_by_topic:
+      T0: [SRC_T0_UEFA_FIXTURES_20260709]
+      T1: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_AFA_QF_20260709, SRC_T5_TN_ARGENTINA_20260709, SRC_T5_SRF_SWISS_20260709]
+      T3: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_AFA_QF_20260709, SRC_T5_TN_ARGENTINA_20260709, SRC_T5_SRF_SWISS_20260709]
+      T4: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_AFA_QF_20260709, SRC_T5_TN_ARGENTINA_20260709, SRC_T5_SRF_SWISS_20260709]
+      T5: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_AFA_QF_20260709, SRC_T5_TN_ARGENTINA_20260709, SRC_T5_SRF_SWISS_20260709]
+    source_ids: [SRC_T0_UEFA_FIXTURES_20260709, SRC_T1_AFA_QF_20260709, SRC_T5_TN_ARGENTINA_20260709, SRC_T5_SRF_SWISS_20260709]
+    checked_at: 2026-07-09T13:50:51+02:00
+    freshness: current_with_documented_gaps
+    confidence: MEDIUM
+    information_gaps: Referee, official XIs, Manzambi status and exact hourly weather unknown.
+    raw_context_direction: Argentina slight logistical context, confidence insufficient
+    damped_context_effect: 0.0
+    model_effect_allowed: false
+    model_effect_reason: Availability and weather gaps prevent a complete post-prior chain; no synthetic delta.
+    post_prior_context_event_chain: source -> tier -> publication/check after prior cutoff where applicable -> named matchup -> availability/context -> zero net effect
+
+PRE_MATCH_AUDIT
+completed: true
+pre_match_source_run_completed: true
+pre_match_source_quality_sufficient: true
+all_upcoming_matches_covered: true
+topic_coverage_by_match: QF_1=T0,T1,T3,T4,T5; QF_2=T0,T1,T3,T4,T5; QF_3=T0,T1,T3,T4,T5; QF_4=T0,T1,T3,T4,T5
+unknown_items_explicit: true
+sources_attached_to_each_preview: true
+no_unconfirmed_fact_used: true
+no_t7_source_used: true
+no_double_counting: true
+contextual_effects_minimal: true_all_zero
+knockout_pair_effects_zero_sum: true_all_zero
+group_effects_scenario_gated: not_applicable
+failed_checks: none
+
+NEXT_OBSERVATION_VARIABLES_FOR_NEXT_RUN
+France-Morocco; Spain-Belgium; Norway-England; Argentina-Switzerland; official correction scan; T6 warning scan.
+
+AUDIT_SUMMARY_CURRENT
+current_sources_fetched: true
+source_run_completed: true
+T0_core_checked: true
+T1_team_checked: true_context
+T3_public_data_checked: true
+T4_context_checked: true
+T5_news_checked: true
+T6_social_checked: true_warning_only
+T7_external_forecasts_blocked: true
+no_t7_sources_loaded_or_used: true
+social_media_sets_no_fact: true
+new_matches_complete: true
+all_upcoming_matches_have_pre_match_dossier: true
+pre_match_unknowns_are_explicit: true
+every_match_preview_has_direct_sources: true
+pre_match_context_effect_is_strongly_damped: true_all_zero
+knockout_pre_match_adjustment_is_pairwise_zero_sum: true_all_zero
+every_nonzero_pre_match_effect_has_post_prior_context_event_chain: true_vacuous
+no_pre_match_signal_double_counted: true
+group_stage_final_qualification_gate_passed: true
+knockout_bracket_state_complete: true
+probability_sum_passed: true 100.0
+final_probability_sum_passed: true 200.0
+semi_final_probability_sum_passed: true 400.0
+quarter_final_probability_sum_passed: true 800.0
+probability_monotone_nonincreasing: true
+ranks_gapless_1_to_8: true
+same_order_de_html_en_html_prior_table: true
+prior_state_lossless_check_team_count_equal_or_archived: true
+artifact_audit_passed: true
+prior_state_used_only_as_prior: true
+all_deltas_have_new_event_chain: true
+no_synthetic_delta_created: true
+matchup_matrix_built: true
+path_simulation_completed: true
+audit_passed: true
+
+LOSSLESS_PRIOR_STATE_CARRY_FORWARD_AUDIT
+loaded_prior_team_count: 10
+new_main_table_team_count: 8
+old_zero_rows_removed_from_main_table_by_lifecycle_rule: Egypt, Colombia
+newly_zero_rows_retained_in_main_table_today: none
+active_positive_rows: France, Spain, England, Argentina, Norway, Belgium, Switzerland, Morocco
+archived_or_status_retained_zero_rows: Japan, Germany, Netherlands, Cote d Ivoire, Sweden, Ecuador, Congo DR, Bosnia and Herzegovina, Senegal, Croatia, Austria, Algeria, Australia, Ghana, Cabo Verde, Canada, Paraguay, Brazil, Mexico, Portugal, USA, Egypt, Colombia
+restfield_component_fill_applied: false_no_positive_restfield_residual
+restfield_residual_row: none_positive_residual_after_component_lift
+mandatory_sections_carried_forward: complete
+unaffected_team_rows_semantically_unchanged: true
