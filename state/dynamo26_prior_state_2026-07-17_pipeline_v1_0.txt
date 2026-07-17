@@ -1,0 +1,509 @@
+DYNAMO-26 PRIOR_STATE_FILE
+file_version: pipeline_v1.0
+created_for_next_run: true
+created_at_run_date: 2026-07-17
+created_at_berlin: 2026-07-17T10:55:55+02:00
+created_at_utc: 2026-07-17T08:55:55Z
+model_name: DYNAMO26 3.0
+model_version: pipeline_v1.0
+language: de
+intended_use: prior_state_input_for_next_DYNAMO_26_pipeline_run
+
+IMPORTANT_PROCESSING_INSTRUCTIONS_FOR_NEXT_STATE_MACHINE_RUN
+Diese Datei ist PRIOR_STATE, keine aktuelle Quelle. Der naechste Lauf muss FETCH_CURRENT_SOURCES neu ausfuehren. T7 bleibt als Modellinput vollstaendig verboten: nicht gezielt suchen, zitieren, speichern, kalibrieren oder kausal verwenden. Wenn eine ansonsten zulaessige Quelle zufaellig einen T7-Abschnitt enthaelt, wird nur dieser Abschnitt als ignored_t7_segment dokumentiert und ignoriert. Social Media ohne Bestaetigung setzt keinen Fakt.
+
+RUN_METADATA
+run_id: 20260717T085555Z_current_no_new_events
+run_date: 2026-07-17
+run_mode: DAILY_CURRENT_UPDATE
+run_result_type: CURRENT_WITH_NO_NEW_MODEL_EVENTS
+output_status: CURRENT
+confidence_level: MEDIUM
+source_quality_score: 87
+probability_sum: 100.0
+final_probability_sum: 200.0
+semi_final_probability_sum: 200.0_hidden_final_stage
+quarter_final_probability_sum_audit_universe: 200.0_hidden_final_stage
+probability_simulation_method: deterministic_fixed_final_branch_carried_forward_no_new_match
+probability_simulation_seed: deterministic_no_random_draw
+probability_simulation_iterations: exact_path_enumeration
+prior_loaded_from_this_run: website/wm26/runs/dynamo26_prior_state_2026-07-16_pipeline_v1_0.txt
+prior_cutoff_utc: 2026-07-16T09:32:01Z
+sort_rule: title_probability_percent descending; ranks recalculated gapless 1..2
+
+SEARCH_QUERIES_USED
+- FIFA World Cup 2026 Spain Argentina final July 19 2026 New York New Jersey Stadium July 17 2026
+- World Cup 2026 England France third place July 18 2026 Miami July 17 2026
+- World Cup 2026 July 17 2026 matches completed Spain Argentina final England France third place
+- 2026 World Cup final Spain Argentina referee announced July 17 2026 FIFA
+- site:fifa.com World Cup final Spain Argentina referee July 17 2026
+- Spain Argentina World Cup final 2026 team news injury training press conference July 17 2026
+- Argentina Spain World Cup final Messi Yamal team news July 17 2026
+- site:rfef.es selección española entrenamiento final Mundial Argentina 17 julio 2026 De la Fuente Rodri Yamal
+- España Argentina final Mundial 2026 entrenamiento rueda de prensa De la Fuente Scaloni 17 julio 2026
+- site:afa.com.ar Argentina entrenamiento final Mundial España 17 julio 2026 Scaloni Messi Lautaro
+- Argentina España final Mundial 2026 entrenamiento conferencia Scaloni Messi Lautaro 17 julio 2026
+- France England third place World Cup 2026 team news injuries training press conference July 17 2026
+- site:fff.fr France England third place World Cup training July 17 2026 Deschamps
+- site:englandfootball.com England France third place World Cup 2026 training Tuchel July 17 2026
+- France Angleterre match pour la troisième place Coupe du Monde 2026 Deschamps conférence 17 juillet 2026
+- East Rutherford New Jersey weather July 19 2026 3 pm World Cup final forecast
+- Miami Gardens weather July 18 2026 5 pm World Cup third place forecast
+- MetLife Stadium weather forecast July 19 2026 Spain Argentina final
+- Hard Rock Stadium weather forecast July 18 2026 France England third place
+- World Cup 2026 July 17 2026 no matches rest day final Spain Argentina third place France England
+- 2026 FIFA World Cup July 17 2026 schedule rest day final third place
+- site:fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026 July 17 2026 World Cup schedule rest day final third place
+
+CURRENT_SOURCE_EVENTS_USED
+- SRC_T0_FIFA_SCHEDULE_20260717 | tier=T0 | url=https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/match-schedule-fixtures-results-teams-stadiums | claim=FIFA schedule/results core opened; text extraction remained dynamic-limited, so it is documented as official core check plus limitation.
+- SRC_T5_FOX_REST_DAY_20260717 | tier=T5/T3 | url=https://www.foxsports.com/stories/soccer/any-world-cup-games-today-schedule-france-vs-england-spain-vs-argentina | claim=FOX schedule check verifies no World Cup games on July 16 or July 17; play resumes with France-England and Spain-Argentina.
+- SRC_T0_METLIFE_FINAL_20260717 | tier=T0/T4 | url=https://www.metlifestadium.com/events/detail/fifa-world-cup-2026-final | claim=MetLife Stadium event page confirms Spain vs Argentina final, July 19, 2026, 3:00 PM ET.
+- SRC_T1_RFEF_REF_FINAL_20260717 | tier=T1/T0-context | url=https://rfef.es/es/noticias/slavko-vincic-arbitro-de-la-gran-final-del-mundial | claim=RFEF reports Slavko Vincic as final referee with Slovenian assistants and Jordanian fourth official.
+- SRC_T5_BEIN_REF_FINAL_20260717 | tier=T5/T0-context | url=https://www.beinsports.com/en-us/soccer/fifa-world-cup-2026/articles/fifa-appoints-referee-for-the-2026-world-cup-final-between-spain-and-argentina-2026-07-17 | claim=beIN reports FIFA appointed Slavko Vincic for Spain-Argentina final.
+- SRC_T1_RFEF_SPAIN_TRAINING_20260717 | tier=T1 | url=https://rfef.es/es/noticias/espana-ya-entrena-pensando-en-la-final-de-la-copa-del-mundo | claim=RFEF confirms Spain's first New Jersey training session after arrival at Newark and Whippany training base.
+- SRC_T5_AP_FINAL_PREVIEW_20260717 | tier=T5/T3 | url=https://apnews.com/article/argentina-messi-spain-yamal-world-cup-final-55077ce5c4728c4207a39cc4aa8a41a1 | claim=AP previews Spain-Argentina final, tournament paths and style contrast; incidental odds paragraph ignored as T7.
+- SRC_T5_AP_SPAIN_SMOKE_20260717 | tier=T5/T4 | url=https://apnews.com/article/spain-wildfires-smoke-world-cup-c2fc1c37a64bb6514708052dc5e42d28 | claim=AP reports Spain trained outside in northern New Jersey haze; Argentina remained in Atlanta; smoke expected to improve by Sunday.
+- SRC_T4_TIMESUNION_FINAL_WEATHER_20260717 | tier=T4/T5 | url=https://www.timesunion.com/sports/article/2026-fifa-world-cup-final-spain-argentina-22347526.php | claim=Times Union/NWS context: mid-80s Fahrenheit, low storm risk, air-quality uncertainty and hydration-break context for the final.
+- SRC_T5_GUARDIAN_TUCHEL_20260717 | tier=T5/T1 | url=https://www.theguardian.com/football/2026/jul/16/thomas-tuchel-england-2026-world-cup-semi-final-argentina-euro-2028 | claim=Guardian reports Tuchel remains committed and discusses England's passivity after semifinal loss.
+- SRC_T5_LEQUIPE_DESCHAMPS_20260717 | tier=T5/T1 | url=https://www.lequipe.fr/Football/Actualites/Didier-deschamps-estime-que-l-equipe-de-france-doit-faire-le-job-lors-du-match-pour-la-3e-place-malgre-la-deception-heureusement-que-ca-fait-mal/1704764 | claim=L'Equipe reports Deschamps says France will treat the third-place match seriously, not as a friendly.
+- SRC_T4_SUN_THIRD_WEATHER_20260717 | tier=T4/T5 | url=https://www.thesun.co.uk/sport/39777841/england-france-world-cup-playoff-miami-thunderstorms/ | claim=The Sun reports Miami third-place weather risk: heat, thunder showers and possible lightning delays.
+- SRC_T6_PUBLIC_WARNING_20260717 | tier=T6 warning_only | url=https://www.theguardian.com/football/live/2026/jul/16/world-cup-2026-argentina-break-england-hearts-and-head-for-final-with-spain-live | claim=Public social/political warning scan: Argentina banner/Falklands dispute and calls for FIFA investigation; warning_only, no standalone model fact.
+- SRC_T7_IGNORED_SEGMENT_AP_FINAL_20260717 | tier=T7_ignored_segment | url=https://apnews.com/article/argentina-messi-spain-yamal-world-cup-final-55077ce5c4728c4207a39cc4aa8a41a1 | claim=Incidental odds paragraph in AP final preview was ignored entirely: no fact, no calibration, no probability effect.
+
+SOURCE_LIMITATION_NOTE
+- Search snippets alone set no fact.
+- Internal Codex web search worked; Chrome fallback was not used.
+- FIFA official core page was opened but exposed no text lines in the tool; current schedule/rest-day and venue sources covered the current core.
+- T7 was not searched for or used. One incidental AP odds paragraph was documented as ignored_t7_segment and excluded from all facts, signals, probabilities and wording.
+- Social media/public warning scan set no model fact.
+
+NEW_MATCH_COMPLETENESS_GATE
+prior_cutoff_utc: 2026-07-16T09:32:01Z
+control_list_count: 0
+completed_matches_after_prior_cutoff: none
+open_matches_at_audit_time: THIRD_PLACE France-England scheduled 2026-07-18 17:00 ET / 23:00 CEST; FINAL Spain-Argentina scheduled 2026-07-19 15:00 ET / 21:00 CEST
+new_matches_complete: true
+
+GROUP_STAGE_FINAL_QUALIFICATION_GATE
+group_stage_finished_official_core: true
+prior_state_had_group_stage_final_qualification_gate_passed: true
+prior_state_had_complete_knockout_bracket_state: true
+gate_executed_this_run: false
+gate_reused_from_prior_state: true
+official_correction_scan_completed: true
+official_correction_or_bracket_change_found: false
+group_stage_final_qualification_gate_passed: true
+group_stage_final_qualification_gate_checked_at: 2026-07-17T10:55:55+02:00
+qualified_teams: Mexico, USA, Germany, Argentina, France, Norway, Colombia, Switzerland, Canada, Brazil, Morocco, Bosnia and Herzegovina, South Africa, Cote d Ivoire, Ecuador, Netherlands, Japan, Sweden, Australia, Spain, Cabo Verde, Paraguay, Belgium, Egypt, Senegal, England, Croatia, Ghana, Portugal, Congo DR, Austria, Algeria
+best_third_placed_teams: Bosnia and Herzegovina, Ecuador, Sweden, Paraguay, Senegal, Ghana, Congo DR, Algeria
+eliminated_teams: Haiti, Tunisia, Turkiye, Jordan, Panama, Qatar, Czechia, Curacao, Iraq, Uruguay, Saudi Arabia, New Zealand, Scotland, Uzbekistan, Korea Republic, IR Iran
+knockout_eliminated_teams_after_prior_cutoff: Morocco, Belgium, Norway, Switzerland, France, England
+qualification_gate_reopen_only_on_official_correction: true
+
+KNOCKOUT_BRACKET_STATE
+current_stage: final
+bracket_locked: true
+checked_at: 2026-07-17T10:55:55+02:00
+display_intermediate_probability: none
+reopen_only_on_official_correction: true
+sources: [SRC_T0_FIFA_SCHEDULE_20260717, SRC_T5_FOX_REST_DAY_20260717, SRC_T0_METLIFE_FINAL_20260717]
+rounds:
+  - match_id: QF_1
+    round: quarter_final
+    slot: upper_sf1_a
+    team_a: France
+    team_b: Morocco
+    status: completed
+    score: France 2-0 Morocco
+    winner: France
+    winner_to: SF_1
+    loser_eliminated: true
+    half: upper
+    quarter: q1
+    sources: [carried_forward_from_prior_state]
+  - match_id: QF_2
+    round: quarter_final
+    slot: upper_sf1_b
+    team_a: Spain
+    team_b: Belgium
+    status: completed
+    score: Spain 2-1 Belgium
+    winner: Spain
+    winner_to: SF_1
+    loser_eliminated: true
+    half: upper
+    quarter: q2
+    sources: [carried_forward_from_prior_state]
+  - match_id: QF_3
+    round: quarter_final
+    slot: lower_sf2_a
+    team_a: Norway
+    team_b: England
+    status: completed
+    score: England 2-1 Norway after extra time
+    winner: England
+    winner_to: SF_2
+    loser_eliminated: true
+    half: lower
+    quarter: q3
+    sources: [carried_forward_from_prior_state]
+  - match_id: QF_4
+    round: quarter_final
+    slot: lower_sf2_b
+    team_a: Argentina
+    team_b: Switzerland
+    status: completed
+    score: Argentina 3-1 Switzerland after extra time
+    winner: Argentina
+    winner_to: SF_2
+    loser_eliminated: true
+    half: lower
+    quarter: q4
+    sources: [carried_forward_from_prior_state]
+  - match_id: SF_1
+    round: semi_final
+    slot: final_a
+    team_a: France
+    team_b: Spain
+    status: completed
+    score: Spain 2-0 France
+    winner: Spain
+    winner_to: FINAL
+    loser_eliminated: true
+    half: upper
+    quarter: null
+    sources: [carried_forward_from_prior_state]
+  - match_id: SF_2
+    round: semi_final
+    slot: final_b
+    team_a: England
+    team_b: Argentina
+    status: completed
+    score: Argentina 2-1 England
+    winner: Argentina
+    winner_to: FINAL
+    loser_eliminated: true
+    half: lower
+    quarter: null
+    sources: [carried_forward_from_prior_state]
+  - match_id: FINAL
+    round: final
+    slot: title
+    team_a: Spain
+    team_b: Argentina
+    status: scheduled
+    score: null
+    winner: null
+    winner_to: CHAMPION
+    loser_eliminated: false
+    half: final
+    quarter: null
+    sources: [SRC_T0_METLIFE_FINAL_20260717, SRC_T1_RFEF_REF_FINAL_20260717, SRC_T5_AP_FINAL_PREVIEW_20260717]
+  - match_id: THIRD_PLACE
+    round: third_place
+    slot: bronze
+    team_a: France
+    team_b: England
+    status: scheduled
+    score: null
+    winner: null
+    winner_to: THIRD_PLACE
+    loser_eliminated: false
+    half: classification
+    quarter: null
+    sources: [SRC_T5_FOX_REST_DAY_20260717, SRC_T5_LEQUIPE_DESCHAMPS_20260717, SRC_T5_GUARDIAN_TUCHEL_20260717]
+team_bracket_positions:
+  - team: Spain
+    status: live
+    half: upper
+    quarter: q2
+    slot: FINAL_a
+    current_match_id: FINAL
+    possible_next_match_id: CHAMPION
+  - team: Argentina
+    status: live
+    half: lower
+    quarter: q4
+    slot: FINAL_b
+    current_match_id: FINAL
+    possible_next_match_id: CHAMPION
+  - team: England
+    status: eliminated_prior_run_title_path_closed
+    half: lower
+    quarter: q3
+    slot: THIRD_PLACE_b
+    current_match_id: THIRD_PLACE
+    possible_next_match_id: null
+  - team: France
+    status: eliminated_prior_run_title_path_closed
+    half: upper
+    quarter: q1
+    slot: THIRD_PLACE_a
+    current_match_id: THIRD_PLACE
+    possible_next_match_id: null
+  - team: Morocco
+    status: eliminated_previous_run
+    current_match_id: QF_1
+  - team: Belgium
+    status: eliminated_previous_run
+    current_match_id: QF_2
+  - team: Norway
+    status: eliminated_previous_run
+    current_match_id: QF_3
+  - team: Switzerland
+    status: eliminated_previous_run
+    current_match_id: QF_4
+
+TITLE_PROBABILITY_PRIOR_TABLE
+rank,team,title_probability_percent,final_probability_percent,semi_final_probability_percent,quarter_final_probability_percent,early_exit_probability_percent,crash_risk_score,main_positive_driver,main_negative_risk,confidence
+1,Spain,56.0,100.0,100.0,100.0,44.0,24.0,Already reached the final; current source run found no new match or non-duplicative confirmed context strong enough to alter the final branch.,Argentina's late-game Messi-to-Lautaro route, perfect tournament record and heat/outdoor familiarity keep the final live.,MEDIUM
+2,Argentina,44.0,100.0,100.0,100.0,56.0,32.0,Final berth locked from prior verified semifinal result; no new result after cutoff changed the title path.,Spain's defensive stability, ball control and extra preparation day cap upside.,MEDIUM
+
+INDEX_PRIOR_TABLE
+team,affected_indices,direction,D_prior,D_current,mechanism
+Spain,MatchPath/PreMatchContext,unchanged,prior value,unchanged,No newly completed match and no complete post-cutoff non-duplicative context chain changed the fixed final branch.
+Argentina,MatchPath/PreMatchContext,unchanged,prior value,unchanged,No newly completed match and no complete post-cutoff non-duplicative context chain changed the fixed final branch.
+England,ArchiveStatus,unchanged_zero,0 title path,0 title path,Already zero before this run; removed from main table by lifecycle rule and retained in archive.
+France,ArchiveStatus,unchanged_zero,0 title path,0 title path,Already zero before this run; retained in archive and third-place preview only.
+FINAL,MatchupContext,zero,0.0,0.0,Referee, weather, smoke and training updates are informative only; no non-duplicative directional model chain supports a nonzero effect.
+THIRD_PLACE,TitleModelEffect,zero,0.0,0.0,Third-place match has no title-probability path effect.
+
+CRASH_RISK_PRIOR_TABLE
+Spain,24.0,Final berth locked; Argentina's comeback and late-creation profile keep final volatility visible.
+Argentina,32.0,Final berth locked; Spain's control and defensive stability remain the main final risk.
+England,100.0,Title path closed by prior verified semifinal loss to Argentina; retained in archive.
+France,100.0,Title path closed by prior verified semifinal loss to Spain; retained in archive.
+Morocco,100.0,Title path closed before this run.
+Belgium,100.0,Title path closed before this run.
+Norway,100.0,Title path closed before this run.
+Switzerland,100.0,Title path closed before this run.
+
+CAUSAL_CHAINS_CURRENT
+- SRC_T5_FOX_REST_DAY_20260717 plus SRC_T0_FIFA_SCHEDULE_20260717 -> no World Cup games on July 16 or July 17 and no completed match after 2026-07-16T09:32:01Z -> no path update -> Spain remains 56.0 and Argentina remains 44.0.
+- SRC_T1_RFEF_REF_FINAL_20260717 plus SRC_T5_BEIN_REF_FINAL_20260717 -> Slavko Vincic final appointment verified -> referee status gap closed -> no confirmed team-specific style interaction -> damped_context_effect 0.0.
+- SRC_T1_RFEF_SPAIN_TRAINING_20260717 plus SRC_T5_AP_SPAIN_SMOKE_20260717 -> Spain New Jersey training and smoke/AQI context verified -> operational risk noted -> no confirmed medical/performance effect -> no title delta.
+- SRC_T4_TIMESUNION_FINAL_WEATHER_20260717 -> heat/storm/AQI uncertainty documented -> preview risk only -> no nonzero model effect because Sunday operation and player effects are not confirmed.
+- SRC_T5_LEQUIPE_DESCHAMPS_20260717 plus SRC_T5_GUARDIAN_TUCHEL_20260717 -> third-place team environment updated -> informative dossier -> no title path effect.
+- SRC_T6_PUBLIC_WARNING_20260717 -> public social/political warning scan -> warning_only -> no fact and no model effect.
+- SRC_T7_IGNORED_SEGMENT_AP_FINAL_20260717 -> incidental AP odds paragraph ignored -> no signal, no calibration, no causal chain and no model effect.
+
+CHANGE_SUMMARY_CURRENT
+No team title-probability changes. Spain remains 56.0%; Argentina remains 44.0%. England is removed from the main table only by the 0.0-row lifecycle rule and remains archived.
+Other small changes are source-context, dossier-refresh and table-lifecycle effects, not model probability effects. T6 warning scan set no fact. T7 was not searched or used; any incidental T7 segment was ignored with no model effect.
+
+PRE_MATCH_DOSSIERS
+  - match_id: FINAL
+    competition_stage: final
+    teams: Spain - Argentina
+    kickoff_at: 2026-07-19T15:00:00-04:00 / 21:00 CEST
+    venue: MetLife Stadium / New York New Jersey Stadium, East Rutherford, New Jersey
+    venue_status: open-air stadium; heat, air quality and lightning procedures remain operational watch items
+    referee: Slavko Vincic
+    referee_appointment_status: confirmed_by_RFEF_and_beIN_reporting_FIFA_appointment
+    referee_style_relevance: no model edge; no directly evidenced team-specific style interaction
+    team_a_availability: Spain official XI and complete medical bulletin unknown; RFEF confirms team has begun New Jersey preparation.
+    team_b_availability: Argentina official XI and complete medical bulletin unknown; AP confirms Argentina remained in Atlanta area after reaching final.
+    team_a_expected_lineup: Official XI unknown; no confirmed lineup assumption used.
+    team_b_expected_lineup: Official XI unknown; Messi, Enzo Fernandez and Lautaro Martinez remain verified recent contributors, not guaranteed starters.
+    team_a_environment: Spain is finalist with defensive control profile and one extra preparation day; smoke/AQI during New Jersey training is a monitored non-blocking risk.
+    team_b_environment: Argentina is unbeaten, defending champion finalist with comeback resilience and late Messi/Lautaro route.
+    team_a_playing_style: Ball control, defensive spacing, rest-defense and low concession profile.
+    team_b_playing_style: Messi-led creation, late box arrivals, forward rotation and emotional resilience.
+    tactical_interactions: Spain's control and rest-defense meet Argentina's late pressure and Messi delivery; informative only.
+    team_a_attacking_intent: controlled possession and structured chance creation
+    team_b_attacking_intent: direct late pressure and transition-to-box creation
+    team_a_passivity_or_penalty_tendency: low passivity; may manage tempo if leading
+    team_b_passivity_or_penalty_tendency: not passive when trailing; penalty route possible but not modeled as preferred
+    early_lead_benefits: Spain benefits more from early lead through control and defensive structure
+    first_concede_response_edge: Argentina has better verified comeback pattern
+    likely_match_flow_scenarios: Spain-control lead scenario; Argentina late-pressure scenario; neutral scenario with extra-time risk
+    rest_and_travel_context: Spain had one extra day and is already in New Jersey; Argentina initially remained in Atlanta after SF_2 before final travel.
+    weather_at_kickoff: mid-80s Fahrenheit forecast context with low storm risk and AQI uncertainty; Sunday smoke expected to improve but remains monitored.
+    group_scenario_relevance: not_applicable_knockout_final
+    internal_match_win_probability_team_a: 56.0
+    internal_match_win_probability_team_b: 44.0
+    internal_extra_time_probability: 27.0
+    internal_penalty_shootout_probability: 14.0
+    internal_match_quote_basis: fixed final branch from prior path model; no external odds; new referee/weather/training context zero-effect after damping
+    pre_match_factor: 0.0
+    quote_sensitivity: 0.9856
+    conditional_win_probability_before_context: Spain 56.0 / Argentina 44.0
+    conditional_win_probability_after_context: Spain 56.0 / Argentina 44.0
+    propagated_title_probability_delta_team_a: 0.0
+    propagated_title_probability_delta_team_b: 0.0
+    evidence_by_topic: T0=[SRC_T0_FIFA_SCHEDULE_20260717,SRC_T0_METLIFE_FINAL_20260717,SRC_T1_RFEF_REF_FINAL_20260717]; T1=[SRC_T1_RFEF_SPAIN_TRAINING_20260717,SRC_T5_AP_SPAIN_SMOKE_20260717]; T3=[SRC_T5_AP_FINAL_PREVIEW_20260717]; T4=[SRC_T4_TIMESUNION_FINAL_WEATHER_20260717,SRC_T5_AP_SPAIN_SMOKE_20260717]; T5=[SRC_T5_BEIN_REF_FINAL_20260717,SRC_T5_AP_FINAL_PREVIEW_20260717]; T6=[SRC_T6_PUBLIC_WARNING_20260717]
+    source_ids: [SRC_T0_FIFA_SCHEDULE_20260717, SRC_T0_METLIFE_FINAL_20260717, SRC_T1_RFEF_REF_FINAL_20260717, SRC_T5_BEIN_REF_FINAL_20260717, SRC_T1_RFEF_SPAIN_TRAINING_20260717, SRC_T5_AP_FINAL_PREVIEW_20260717, SRC_T5_AP_SPAIN_SMOKE_20260717, SRC_T4_TIMESUNION_FINAL_WEATHER_20260717, SRC_T6_PUBLIC_WARNING_20260717]
+    checked_at: 2026-07-17T10:55:55+02:00
+    freshness: current_with_documented_gaps
+    confidence: MEDIUM
+    information_gaps: Official starting XIs, complete medical bulletins, Argentina final training details, final matchday AQI/weather operations and final disciplinary status remain unknown.
+    raw_context_direction: informational_only_mixed
+    damped_context_effect: 0.0
+    model_effect_allowed: false_nonzero_blocked
+    model_effect_reason: New facts are real but do not provide a complete non-duplicative directional chain after damping; final pairing and baseline already captured by prior path model.
+    post_prior_context_event_chain: SRC_T1_RFEF_REF_FINAL_20260717/SRC_T5_AP_SPAIN_SMOKE_20260717/SRC_T4_TIMESUNION_FINAL_WEATHER_20260717 -> context verified -> no confirmed team-specific effect -> zero
+  - match_id: THIRD_PLACE
+    competition_stage: third_place
+    teams: France - England
+    kickoff_at: 2026-07-18T17:00:00-04:00 / 23:00 CEST
+    venue: Hard Rock Stadium / Miami Stadium, Miami Gardens, Florida
+    venue_status: open-air hot/humid context; thunderstorm and lightning-delay risk monitored
+    referee: unknown
+    referee_appointment_status: not_officially_confirmed_in_opened_sources
+    referee_style_relevance: no model edge; no confirmed appointment
+    team_a_availability: France official XI and complete medical bulletin unknown; Deschamps says France must do the job and treat it seriously.
+    team_b_availability: England official XI and complete medical bulletin unknown; Guardian documents Tuchel's passivity analysis and continued role.
+    team_a_expected_lineup: Official XI unknown; rotation possibility not confirmed.
+    team_b_expected_lineup: Official XI unknown; rotation possibility not confirmed.
+    team_a_environment: France disappointed but motivated to finish Deschamps era with third place.
+    team_b_environment: England disappointed after late semifinal collapse and focused on future control problem.
+    team_a_playing_style: High attacking talent with potential emotional reset.
+    team_b_playing_style: Direct Kane/Bellingham/Gordon routes, but recent passivity after leading remains a concern.
+    tactical_interactions: Classification match may be rotation-sensitive; no confirmed rotation means no model shift.
+    team_a_attacking_intent: likely professional push for podium finish
+    team_b_attacking_intent: direct response and pride restoration
+    team_a_passivity_or_penalty_tendency: no title stakes; may manage legs if ahead
+    team_b_passivity_or_penalty_tendency: recent leading-game passivity noted, not projected as confirmed plan
+    early_lead_benefits: France slightly more through control and send-off motivation
+    first_concede_response_edge: England slightly better direct-response options, uncertain
+    likely_match_flow_scenarios: open classification game; weather delay scenario; rotation-sensitive tempo scenario
+    rest_and_travel_context: France had one extra day; England travels/reset after Atlanta semifinal loss.
+    weather_at_kickoff: 33 C heat and thundery showers reported as risk window; exact kickoff operational status unknown.
+    group_scenario_relevance: not_applicable_classification_match
+    internal_match_win_probability_team_a: 53.0
+    internal_match_win_probability_team_b: 47.0
+    internal_extra_time_probability: 24.0
+    internal_penalty_shootout_probability: 11.0
+    internal_match_quote_basis: internal non-title classification estimate from team states, fatigue, motivation and weather context; no external odds
+    pre_match_factor: 0.0
+    quote_sensitivity: 0.9964
+    conditional_win_probability_before_context: France 53.0 / England 47.0
+    conditional_win_probability_after_context: France 53.0 / England 47.0
+    propagated_title_probability_delta_team_a: 0.0
+    propagated_title_probability_delta_team_b: 0.0
+    evidence_by_topic: T0=[SRC_T5_FOX_REST_DAY_20260717]; T1=[SRC_T5_LEQUIPE_DESCHAMPS_20260717,SRC_T5_GUARDIAN_TUCHEL_20260717]; T3=[SRC_T5_FOX_REST_DAY_20260717]; T4=[SRC_T4_SUN_THIRD_WEATHER_20260717]; T5=[SRC_T5_LEQUIPE_DESCHAMPS_20260717,SRC_T5_GUARDIAN_TUCHEL_20260717]; T6=[SRC_T6_PUBLIC_WARNING_20260717]
+    source_ids: [SRC_T5_FOX_REST_DAY_20260717, SRC_T5_LEQUIPE_DESCHAMPS_20260717, SRC_T5_GUARDIAN_TUCHEL_20260717, SRC_T4_SUN_THIRD_WEATHER_20260717, SRC_T6_PUBLIC_WARNING_20260717]
+    checked_at: 2026-07-17T10:55:55+02:00
+    freshness: current_with_documented_gaps
+    confidence: MEDIUM_LOW
+    information_gaps: Official starting XIs, complete medical bulletins, referee appointment, confirmed rotation plan and exact lightning operations remain unknown.
+    raw_context_direction: informational_only_no_title_model_path
+    damped_context_effect: 0.0
+    model_effect_allowed: false_no_title_path
+    model_effect_reason: Third-place match has no title-probability path; no title model effect is possible.
+    post_prior_context_event_chain: documented_but_zero_title_effect
+
+PRE_MATCH_AUDIT
+completed: true
+pre_match_source_run_completed: true
+pre_match_source_quality_sufficient: true
+all_upcoming_matches_covered: true
+topic_coverage_by_match:
+  FINAL: T0,T1,T3,T4,T5,T6_with_gaps_marked
+  THIRD_PLACE: T0,T1,T3,T4,T5,T6_with_gaps_marked
+unknown_items_explicit: true
+sources_attached_to_each_preview: true
+no_unconfirmed_fact_used: true
+no_t7_source_used: true
+incidental_t7_segments_ignored_without_model_effect: true
+internal_match_quotes_present: true
+internal_match_quotes_do_not_use_t7_or_external_odds: true
+knockout_internal_match_win_probabilities_sum_100: true
+extra_time_and_penalty_probabilities_are_separate_from_match_winner_sum: true
+match_flow_scenarios_present: true
+no_double_counting: true
+contextual_effects_minimal: true_all_zero
+knockout_pair_effects_zero_sum: true_all_zero
+non_final_title_probabilities_not_forced_to_pair_sum_100: true
+group_effects_scenario_gated: true_no_group_matches
+failed_checks: none
+
+UPCOMING_MATCH_PLAN
+fixed_upcoming_matches: FINAL Spain-Argentina; THIRD_PLACE France-England
+placeholder_matches_not_dossiered: none
+
+SOURCE_QUALITY_STATE
+source_run_completed: true
+current_sources_fetched: true
+T0_core_checked: true_with_dynamic_text_limitation_and_stadium_schedule_support
+T1_team_checked: true_context_with_gaps
+T3_public_data_checked: true
+T4_context_checked: true
+T5_news_checked: true
+T6_social_checked: true_warning_only
+T7_calibration_checked: false_forbidden
+t7_external_forecasts_blocked: true
+no_t7_sources_used: true
+incidental_t7_segments_ignored_without_model_effect: true
+credibility_score: 87
+freshness_score: 95
+independence_score: 84
+specificity_score: 85
+actionability_score: 80
+source_quality_score: 87
+unresolved_blocking_conflicts: none
+missing_critical_data: none
+non_blocking_data_gaps: official XIs; complete medical bulletins; third-place referee appointment; exact matchday AQI/weather operations; FIFA dynamic text extraction limitation.
+
+BIAS_FLAGS
+recency_bias_flag: controlled_by_exact_cutoff_and_no_new_match_gate
+star_bias_flag: visible_for_Messi_Yamal_Kane_Mbappe_coverage_but_no_unchecked_effect
+market_bias_flag: controlled_T7_ignored_no_model_effect
+social_hype_bias_flag: blocked_T6_warning_only
+injury_rumor_bias_flag: controlled_unofficial_or_missing_reports_do_not_move_probabilities
+english_language_bias_flag: mitigated_with_Spanish_RFEF_and_French_LEquipe_sources_plus_general_domain_free_searches
+regional_undercoverage_flag: non_blocking_for_Argentina_training_details
+closed_data_bias_flag: visible_non_blocking
+
+AUDIT_SUMMARY_CURRENT
+current_sources_fetched: true
+source_run_completed: true
+T0_core_checked: true_with_dynamic_text_limitation
+T1_team_checked: true_context_with_gaps
+T3_public_data_checked: true
+T4_context_checked: true
+T5_news_checked: true
+T6_social_checked: true_warning_only
+SRC_T6_PUBLIC_WARNING_20260717: documented_warning_only_no_fact
+T7_external_forecasts_blocked: true
+no_t7_sources_used: true
+incidental_t7_segments_ignored_without_model_effect: true
+social_media_sets_no_fact: true
+new_matches_complete: true
+completed_matches_after_prior_cutoff_count: 0
+all_upcoming_matches_have_pre_match_dossier: true
+pre_match_unknowns_are_explicit: true
+every_match_preview_has_direct_sources: true
+pre_match_context_effect_is_strongly_damped: true_all_zero
+knockout_pre_match_adjustment_is_pairwise_zero_sum: true_all_zero
+every_nonzero_pre_match_effect_has_post_prior_context_event_chain: true_vacuous
+no_pre_match_signal_double_counted: true
+group_stage_final_qualification_gate_passed: true
+knockout_bracket_state_complete: true
+probability_sum_passed: true 100.0
+final_probability_sum_passed: true 200.0
+display_intermediate_probability_exclusive: true none_final_stage
+probability_monotone_nonincreasing: true
+ranks_gapless_1_to_2: true
+same_order_de_html_en_html_prior_table: true
+prior_state_lossless_check_team_count_equal_or_archived: true
+artifact_audit_passed: true
+prior_state_used_only_as_prior: true
+all_deltas_have_new_event_chain: true_no_probability_deltas
+no_synthetic_delta_created: true
+matchup_matrix_built: true
+path_simulation_completed: true
+audit_passed: true
+
+LOSSLESS_PRIOR_STATE_CARRY_FORWARD_AUDIT
+loaded_prior_team_count: 3
+new_main_table_team_count: 2
+old_zero_rows_removed_from_main_table_by_lifecycle_rule: England
+newly_zero_rows_retained_in_main_table_today: none
+active_positive_rows: Spain, Argentina
+archived_or_status_retained_zero_rows: England, France, Morocco, Belgium, Norway, Switzerland, Japan, Germany, Netherlands, Cote d Ivoire, Sweden, Ecuador, Congo DR, Bosnia and Herzegovina, Senegal, Croatia, Austria, Algeria, Australia, Ghana, Cabo Verde, Canada, Paraguay, Brazil, Mexico, Portugal, USA, Egypt, Colombia
+restfield_component_fill_applied: false_no_positive_restfield_residual
+restfield_residual_row: none_positive_residual_after_component_lift
+mandatory_sections_carried_forward: complete
+unaffected_team_rows_semantically_unchanged: true

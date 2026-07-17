@@ -239,9 +239,27 @@ fields:
   team_a_playing_style
   team_b_playing_style
   tactical_interactions
+  team_a_attacking_intent
+  team_b_attacking_intent
+  team_a_passivity_or_penalty_tendency
+  team_b_passivity_or_penalty_tendency
+  early_lead_benefits
+  first_concede_response_edge
+  likely_match_flow_scenarios
   rest_and_travel_context
   weather_at_kickoff
   group_scenario_relevance
+  internal_match_win_probability_team_a
+  internal_match_win_probability_team_b
+  internal_extra_time_probability
+  internal_penalty_shootout_probability
+  internal_match_quote_basis
+  pre_match_factor
+  quote_sensitivity
+  conditional_win_probability_before_context
+  conditional_win_probability_after_context
+  propagated_title_probability_delta_team_a
+  propagated_title_probability_delta_team_b
   evidence_by_topic
   source_ids
   checked_at
@@ -264,9 +282,15 @@ fields:
   unknown_items_explicit
   sources_attached_to_each_preview
   no_unconfirmed_fact_used
+  internal_match_quotes_present
+  internal_match_quotes_do_not_use_t7_or_external_odds
+  knockout_internal_match_win_probabilities_sum_100
+  extra_time_and_penalty_probabilities_are_separate_from_match_winner_sum
+  match_flow_scenarios_present
   no_double_counting
   contextual_effects_minimal
   knockout_pair_effects_zero_sum
+  non_final_title_probabilities_not_forced_to_pair_sum_100
   group_effects_scenario_gated
   failed_checks
 
@@ -856,8 +880,16 @@ function BUILD_PRE_MATCH_DOSSIERS(upcoming_matches, classified_sources, prior_st
     - Fitness, Verletzungen, Sperren, Trainingsstatus und erwartete Aufstellungen beider Teams prüfen
     - belastbare Pressekonferenz-/Trainer-/Verbandsaussagen und das Teamumfeld prüfen
     - Spielweise beider Teams sowie konkrete Pressing-, Aufbau-, Umschalt-, Standard- und Rauminteraktionen beschreiben
+    - Spielverlaufsszenarien beschreiben: wem eine frühe Führung stärker hilft, welches Team nach frühem Rückstand die bessere Antwortstruktur besitzt, wer aktiv auf Tore spielt, wer eher kontrolliert/passiv bleibt und ob ein Team plausibel auf Verlängerung oder Elfmeterschießen vertraut
     - Ruhezeit, Reise und Wetter passend zu Ort und Anstoßzeit prüfen
     - bei Gruppenspielen Tabellenstand, Qualifikationsszenario und plausible Rotation als group_scenario_relevance erfassen
+    - eine eigene interne Dynamo26-Matchquote erzeugen:
+      * internal_match_win_probability_team_a + internal_match_win_probability_team_b = 100.0 für K.-o.-Entscheidung inklusive Verlängerung/Elfmeterschießen
+      * internal_extra_time_probability separat als Wahrscheinlichkeit für ein Remis nach 90 Minuten bzw. Verlängerungsbedarf speichern
+      * internal_penalty_shootout_probability separat als Wahrscheinlichkeit speichern, dass die Entscheidung im Elfmeterschießen fällt
+      * diese Quoten aus Teamzustand, Pfadmodell, Matchup, Spielverlauf, Verfügbarkeit, Ruhe/Reise, Wetter und Quellenvertrauen ableiten
+      * keine externen Wettquoten, Medienwahrscheinlichkeiten, Elo-/Ranking-Prognosen oder T7-Segmente verwenden
+      * internal_match_quote_basis muss die wichtigsten Modellgründe und Unsicherheiten kurz nennen
     - je Themenbereich SourceRecord-IDs zuordnen; fehlende Bestätigung ausdrücklich markieren
     - frühere Dossiers nur als Vorzustand und Vergleich verwenden; aktuelle Angaben immer neu prüfen
     - Stimmung nicht aus einzelnen allgemeinen Motivationszitaten ableiten
@@ -878,9 +910,15 @@ function AUDIT_PRE_MATCH_DOSSIERS(upcoming_matches, pre_match_source_run, pre_ma
     - sources_attached_to_each_preview
     - no_unconfirmed_fact_used
     - no_t7_source_used
+    - internal_match_quotes_present
+    - internal_match_quotes_do_not_use_t7_or_external_odds
+    - knockout_internal_match_win_probabilities_sum_100
+    - extra_time_and_penalty_probabilities_are_separate_from_match_winner_sum
+    - match_flow_scenarios_present
     - no_double_counting
     - contextual_effects_minimal
     - knockout_pair_effects_zero_sum
+    - non_final_title_probabilities_not_forced_to_pair_sum_100
     - group_effects_scenario_gated
   returns:
     PreMatchAuditResult
@@ -894,9 +932,18 @@ function BUILD_MATCHUP_MATRIX(team_states, pre_match_dossiers):
     - Pre-Match-Kontext getrennt vom dauerhaften Teamzustand anwenden
     - bestätigte Availability- und taktische Signale stärker gewichten als Wetter, Stimmung oder Schiedsrichterkontext
     - alle kurzfristigen Pre-Match-Signale zu einem confidence-gewichteten Rohkontext in [-1.0, +1.0] je Paarung zusammenführen
-    - den Rohkontext mit einem starken Dämpfungsfaktor von höchstens 0.08 auf der Log-Odds-Skala anwenden; dies ist bewusst keine feste absolute Prozentpunktgrenze
+    - für jede offene Paarung zuerst die bedingte Siegchance der konkreten Partie bestimmen; dies ist nicht automatisch die Titelchance, außer im Finale
+    - quote_sensitivity = 4 * p * (1 - p) aus der aktuellen bedingten Matchquote p berechnen; nahe 50/50 wirkt Pre-Match sichtbarer, bei klaren Favoriten stärker gedämpft
+    - pre_match_factor = min(0.08, 0.08 * quote_sensitivity * confidence_weight * signal_quality_weight) berechnen; confidence_weight und signal_quality_weight liegen jeweils in [0.0, 1.0]
+    - context_log_odds_delta = raw_context_direction * pre_match_factor auf die bedingte Match-Siegchance anwenden
+    - conditional_win_probability_after_context = sigmoid(logit(conditional_win_probability_before_context) + context_log_odds_delta)
+    - den Rohkontext damit weiterhin stark gedämpft und nicht als feste absolute Prozentpunktgrenze anwenden
     - damped_context_effect = 0 setzen, wenn keine vollständige post_prior_context_event_chain vorliegt
-    - bei K.-o.-Spielen nur die bedingte Siegchance innerhalb der konkreten Paarung verschieben: Gewinn von Team A = Verlust von Team B und Summe = 100.0
+    - bei K.-o.-Spielen nur die bedingte Siegchance innerhalb der konkreten Paarung verschieben: Gewinn von Team A = Verlust von Team B und die nächste-Runde-Summe der Paarung = 100.0
+    - die daraus folgenden title_probability_percent-, final_probability_percent- und semi_final_probability_percent-Werte ausschließlich durch SIMULATE_PATHS aus dem festen Turnierbaum propagieren
+    - niemals erzwingen, dass die Titelwahrscheinlichkeiten zweier Teams in einem Viertelfinale oder Halbfinale zusammen 100.0 ergeben; dort ist die gemeinsame Titelchance durch spätere Pfade kleiner oder größer als die konkrete Matchsumme
+    - nur im Finale ist die bedingte Match-Siegchance zugleich die title_probability_percent-Paarungssumme von 100.0
+    - propagated_title_probability_delta_team_a/team_b im Dossier speichern, damit sichtbar ist, wie stark die kleine Matchverschiebung nachgelagert auf Title % wirkt
     - bei Gruppenspielen einen Kontextwert nur anwenden, wenn group_scenario_relevance einen konkreten Tabellen-, Qualifikations- oder Rotationsmechanismus belegt; sonst damped_context_effect = 0
     - kurzfristigen Kontext nicht als dauerhafte Überschreibung von SCI, TBI, AMCI, SAI oder FQ verwenden
     - dasselbe Signal nicht zusätzlich vollständig in Teamindizes, Matchup-Kontext und Crash-Risk zählen
@@ -931,6 +978,7 @@ function NORMALIZE_PROBABILITIES(path_result, bracket_state):
       * QF match: team_a.semi_final + team_b.semi_final = 100.0
       * SF match: team_a.final + team_b.final = 100.0
       * Final match: team_a.title + team_b.title = 100.0
+    - vor dem Finale keine paarweise title_probability_percent-Summe von 100.0 erzwingen; Title % entstehen nur aus der vollständigen Pfadpropagation
     - Title % bleibt nur global auf 100.0 normiert; keine 50/50-Summe je Baumhälfte erzwingen
   returns:
     ProbabilityResult
@@ -1024,8 +1072,14 @@ function AUDIT_MODEL(context, source_run, source_quality, bias_result, signals, 
     - every_upcoming_match_has_pre_match_dossier
     - pre_match_unknowns_are_explicit
     - every_match_preview_has_direct_sources
+    - every_match_preview_has_internal_match_quote
+    - every_match_preview_has_extra_time_and_penalty_estimate
+    - every_match_preview_has_match_flow_assessment
+    - internal_match_quotes_are_model_derived_not_t7_or_external_odds
     - pre_match_context_effect_is_strongly_damped
     - knockout_pre_match_adjustment_is_pairwise_zero_sum
+    - non_final_pre_match_title_effects_are_path_propagated_not_pair_sum_100
+    - final_pre_match_title_effect_matches_final_pair_sum_100
     - group_pre_match_adjustment_has_scenario_mechanism_or_is_zero
     - referee_effect_has_confirmed_appointment_and_style_evidence_or_is_zero
     - mood_effect_has_multiple_reliable_indicators_or_is_zero
@@ -1075,8 +1129,11 @@ function RENDER_OUTPUT(...):
     - Die Zwischenrunden-Spalte wird gemäß MainProbabilityTable.display_intermediate_probability exklusiv beschriftet: nur QF %, nur HF %/Semi-final % oder gar nicht, wenn nur noch das Finale offen ist. Sobald HF % angezeigt wird, darf QF % nicht mehr in der HTML-Haupttabelle stehen; sobald nur noch das Finale offen ist, dürfen weder QF % noch HF % dort stehen. Die vollständigen Rundenwerte bleiben im Prior-State erhalten.
     - Abschnitt 11 stellt jede feststehende kommende Partie einzeln und informativ dar.
     - Pro Partie mindestens aufführen: Termin/Ort, verfügbare Spieler- und Aufstellungsinformationen, Teamumfeld, taktische Stilinteraktionen, Schiedsrichterstatus, Ruhe/Reise, Wetter sowie Unsicherheiten.
+    - Pro Partie die interne Dynamo26-Matchquote aufführen: Siegchance Team A, Siegchance Team B, Verlängerungswahrscheinlichkeit und Elfmeterschießen-Wahrscheinlichkeit; klar kennzeichnen, dass dies interne Modellwerte ohne externe Wettquoten sind.
+    - Pro Partie eine Spielverlaufsanalyse aufführen: wem eine frühe Führung hilft, wer nach frühem Rückstand besser reagieren kann, welches Team aktiver Tore sucht und welches Team eher kontrolliert, passiv bleibt oder notfalls auf Elfmeterschießen vertraut.
     - Keine künstliche Vorteilsbehauptung erzwingen: Wenn ein Faktor keine belastbare Richtung hat, neutral oder unbekannt ausweisen.
     - Die geringe Modellwirkung getrennt vom informativen Ausblick kennzeichnen; der Umfang des Textes darf größer sein als seine Wahrscheinlichkeitswirkung.
+    - Bei Nicht-Final-K.-o.-Spielen ausdrücklich nur die bedingte Match-/nächste-Runde-Wirkung darstellen und Title-%-Folgen als durch den Pfad propagiertes Delta kennzeichnen; nicht behaupten, dass die beiden Teams zusammen 100.0 Title % haben.
     - Quellen als direkt zugeordnete anklickbare Links bei der jeweiligen Partie bzw. dem jeweiligen Faktenblock anzeigen, nicht nur gesammelt im allgemeinen Quellenabschnitt.
     - Deutsche HTML vollständig deutsch und englische HTML vollständig englisch formulieren; Eigennamen und Quellentitel dürfen originalsprachlich bleiben.
   returns:
@@ -1212,7 +1269,7 @@ function EXPORT_ARTIFACTS(...):
     - contain index prior table if status CURRENT or DEGRADED
     - contain crash risk prior table
     - contain causal chains
-    - contain PRE_MATCH_DOSSIERS with checked_at, topic evidence, source IDs, information gaps and applied damped_context_effect for every upcoming match
+    - contain PRE_MATCH_DOSSIERS with checked_at, topic evidence, source IDs, information gaps, internal match quote, extra-time estimate, penalty-shootout estimate, match-flow assessment, pre_match_factor, quote_sensitivity, conditional win probabilities before/after context and applied damped_context_effect for every upcoming match
     - persisted PRE_MATCH_DOSSIERS are audit/prior state only and must be researched again in the next run
     - contain audit summary
     - contain no HTML tags
